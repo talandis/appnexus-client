@@ -1,0 +1,42 @@
+<?php
+
+namespace Audiens\AppnexusClient\repository;
+
+/**
+ * Class RepositoryResponse
+ */
+class RepositoryResponse
+{
+
+    // OK RESPONSE {"response":{"status":"OK","count":1,"start_element":0,"num_elements":100,"id":4959394,"segment":{"id":4959394,"active":true,"description":null,"member_id":3847,"code":null,"provider":"","price":0,"short_name":"Test segment4996","expire_minutes":null,"category":null,"enable_rm_piggyback":false,"last_activity":"2016-03-23 11:21:48","max_usersync_pixels":null,"parent_segment_id":null,"querystring_mapping":null,"querystring_mapping_key_value":null},"dbg":{"instance":"41.api.prod.ams1","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":2,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":2,"write_limit":1073741824,"write_limit_seconds":60,"parent_dbg_info":{"instance":"44.bm-api.prod.nym2","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":2,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":2,"write_limit":1073741824,"write_limit_seconds":60,"time":88.721990585327,"version":"1.16.497","warnings":["Field `member_id` is not available"],"slave_lag":0,"start_microtime":1458732108.3462},"time":347.10383415222,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732108.1427}}}
+    // KO RESPONSE {"response":{"error_id":"SYNTAX","error":"Invalid path \/segment - member is required","error_description":null,"error_code":null,"service":"segment","method":"POST","dbg":{"instance":"40.api.prod.ams1","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":1,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":1,"write_limit":1073741824,"write_limit_seconds":60,"parent_dbg_info":{"instance":"44.bm-api.prod.nym2","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":1,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":1,"write_limit":1073741824,"write_limit_seconds":60,"time":48.772096633911,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732144.0725},"time":278.25713157654,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732143.8902}}}
+
+    protected $successful = true;
+
+    /**
+     * @return boolean
+     */
+    public function isSuccessful()
+    {
+        return $this->successful;
+    }
+
+    /**
+     * @param boolean $successful
+     */
+    public function setSuccessful($successful)
+    {
+        $this->successful = $successful;
+    }
+
+    /**
+     * @param $jsonEncodedResponse
+     *
+     * @return RepositoryResponse
+     */
+    public static function fromResponse($jsonEncodedResponse)
+    {
+        return new self();
+    }
+
+}
