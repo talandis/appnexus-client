@@ -2,6 +2,8 @@
 
 namespace Audiens\AppnexusClient\entity;
 
+use GeneratedHydrator\Configuration;
+
 /**
  * Class Segment
  */
@@ -247,6 +249,24 @@ class Segment
     public function setEnableRmPiggyback($enableRmPiggyback)
     {
         $this->enable_rm_piggy_back = $enableRmPiggyback;
+    }
+
+    /**
+     * @param array $segmentArray
+     *
+     * @return Segment
+     */
+    public static function fromArray(array $segmentArray)
+    {
+
+        $config = new Configuration(Segment::class);
+        $hydratorClass = $config->createFactory()->getHydratorClass();
+        $hydrator = new $hydratorClass();
+        $segment = new self();
+
+        $hydrator->hydrate($segmentArray, $segment);
+
+        return $segment;
     }
 
 }

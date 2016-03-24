@@ -115,14 +115,7 @@ class SegmentRepository
         $responseContent = json_decode($stream->getContents(), true);
         $stream->rewind();
 
-        $config = new Configuration(Segment::class);
-        $hydratorClass = $config->createFactory()->getHydratorClass();
-        $hydrator = new $hydratorClass();
-        $segment = new Segment();
-
-        $hydrator->hydrate($responseContent['response']['segment'], $segment);
-
-        return $segment;
+        return Segment::fromArray($responseContent['response']['segment']);
 
     }
 
@@ -136,7 +129,7 @@ class SegmentRepository
     public function findAll($memberId, $start = 0, $maxResults = 100)
     {
 
-        if ($this->isCacheEnabled()){
+        if ($this->isCacheEnabled()) {
             $cacheKey = self::CACHE_NAMESPACE.sha1($memberId.$start.$maxResults);
             if ($this->cache->contains($cacheKey)) {
                 return $this->cache->fetch($cacheKey);
@@ -158,18 +151,12 @@ class SegmentRepository
         $responseContent = json_decode($stream->getContents(), true);
         $stream->rewind();
 
-        $config = new Configuration(Segment::class);
-        $hydratorClass = $config->createFactory()->getHydratorClass();
-        $hydrator = new $hydratorClass();
-
         $result = [];
 
         foreach ($responseContent['response']['segments'] as $segmentArray) {
-            $segment = new Segment();
-            $hydrator->hydrate($segmentArray, $segment);
-
-            $result[] = clone $segment;
+            $result[] = Segment::fromArray($segmentArray);
         }
+
 
         if ($this->isCacheEnabled()) {
             $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
