@@ -47,19 +47,7 @@ class SegmentRepositoryTest extends TestCase
         $fakeResponse->getBody()->willReturn($stream->reveal());
 
         $payload = [
-            'segment' => [
-                'active' => $segment->isActive(),
-                'description' => $segment->getDescription(),
-                'member_id' => $segment->getMemberId(),
-                'code' => $segment->getCode(),
-                'provider' => $segment->getProvider(),
-                'price' => $segment->getPrice(),
-                'short_name' => $segment->getName(),
-                'expire_minutes' => $segment->getExpireMinutes(),
-                'category' => $segment->getCategory(),
-                'last_activity' => $segment->getLastActivity()->getTimestamp(),
-                'enable_rm_piggyback' => $segment->isEnableRmPiggyback(),
-            ],
+            'segment' => $segment->torray(),
         ];
 
         $client->request('POST', Argument::any(), ['body' => json_encode($payload)])

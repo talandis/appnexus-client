@@ -5,7 +5,6 @@ namespace Audiens\AppnexusClient\repository;
 use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\exceptions\RepositoryException;
 use Doctrine\Common\Cache\Cache;
-use GeneratedHydrator\Configuration;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 
@@ -29,13 +28,15 @@ class SegmentRepository
     /** @var bool */
     protected $cacheEnabled;
 
-    const CACHE_NAMESPACE  = 'appnexus_segment_repository_find_all';
+    const CACHE_NAMESPACE = 'appnexus_segment_repository_find_all';
+
     const CACHE_EXPIRATION = 3600;
 
     /**
      * SegmentRepository constructor.
      *
      * @param ClientInterface $client
+     * @param Cache|null      $cache
      */
     public function __construct(ClientInterface $client, Cache $cache = null)
     {
@@ -56,19 +57,7 @@ class SegmentRepository
         $compiledUrl = self::BASE_URL.$segment->getMemberId();
 
         $payload = [
-            'segment' => [
-                'active' => $segment->isActive(),
-                'description' => $segment->getDescription(),
-                'member_id' => $segment->getMemberId(),
-                'code' => $segment->getCode(),
-                'provider' => $segment->getProvider(),
-                'price' => $segment->getPrice(),
-                'short_name' => $segment->getName(),
-                'expire_minutes' => $segment->getExpireMinutes(),
-                'category' => $segment->getCategory(),
-                'last_activity' => $segment->getLastActivity()->getTimestamp(),
-                'enable_rm_piggyback' => $segment->isEnableRmPiggyback(),
-            ],
+            'segment' => $segment->torray(),
         ];
 
         $response = $this->client->request('POST', $compiledUrl, ['body' => json_encode($payload)]);
@@ -120,6 +109,25 @@ class SegmentRepository
     }
 
     /**
+     * @param $id
+     * @param $memberId
+     *
+     * @return RepositoryResponse
+     */
+    public function remove($id, $memberId)
+    {
+
+        $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
+
+        $response = $this->client->request('DELETE', $compiledUrl);
+
+        $repositoryResponse = RepositoryResponse::fromResponse($response);
+
+        return $repositoryResponse;
+
+    }
+
+    /**
      * @param     $memberId
      * @param int $start
      * @param int $maxResults
@@ -167,6 +175,46 @@ class SegmentRepository
     }
 
     /**
+     * @param Segment $segment
+     *
+     * @return RepositoryResponse
+     * @throws \Exception
+     */
+    public function update(Segment $segment)
+    {
+
+        if (!$segment->getId()) {
+            throw new \Exception('name me - missing id');
+        }
+
+        $compiledUrl = self::BASE_URL.$segment->getMemberId().'/'.$segment->getId();
+
+        $payload = [
+            'segment' => $segment->torray(),
+        ];
+
+        $response = $this->client->request('PUT', $compiledUrl, ['body' => json_encode($payload)]);
+
+        $repositoryResponse = RepositoryResponse::fromResponse($response);
+
+        if ($repositoryResponse->isSuccessful()) {
+
+            $stream = $response->getBody();
+            $responseContent = json_decode($stream->getContents(), true);
+            $stream->rewind();
+
+            if (!(isset($responseContent['response']['segment']['id']))) {
+                throw RepositoryException::wrongFormat(serialize($responseContent));
+            }
+
+            $segment->setId($responseContent['response']['segment']['id']);
+        }
+
+        return $repositoryResponse;
+
+    }
+
+    /**
      * @return boolean
      */
     public function isCacheEnabled()
@@ -174,13 +222,14 @@ class SegmentRepository
         return $this->cacheEnabled;
     }
 
-    /**
-     * @param boolean $cacheEnabled
-     */
-    public function setCacheEnabled($cacheEnabled)
+    public function disableCache()
     {
-        $this->cacheEnabled = $cacheEnabled;
+        $this->cacheEnabled = false;
     }
 
+    public function enableCache()
+    {
+        $this->cacheEnabled = true;
+    }
 
 }

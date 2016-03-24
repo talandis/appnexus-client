@@ -58,7 +58,6 @@ class Segment
         $this->expire_minutes = 2147483647;
     }
 
-
     /**
      * @return int
      */
@@ -269,5 +268,18 @@ class Segment
         return $segment;
     }
 
-}
+    /**
+     * @return array
+     */
+    public function torray()
+    {
 
+        $config = new Configuration(Segment::class);
+        $hydratorClass = $config->createFactory()->getHydratorClass();
+        $hydrator = new $hydratorClass();
+
+        return $hydrator->extract($this);
+
+    }
+
+}
