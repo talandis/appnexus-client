@@ -43,9 +43,6 @@ class Segment
     /** @var  \Datetime */
     protected $last_activity;
 
-    /** @var  bool */
-    protected $enable_rm_piggy_back;
-
     /**
      * Segment constructor
      */
@@ -235,22 +232,6 @@ class Segment
     }
 
     /**
-     * @return boolean
-     */
-    public function isEnableRmPiggyback()
-    {
-        return $this->enable_rm_piggy_back;
-    }
-
-    /**
-     * @param boolean $enableRmPiggyback
-     */
-    public function setEnableRmPiggyback($enableRmPiggyback)
-    {
-        $this->enable_rm_piggy_back = $enableRmPiggyback;
-    }
-
-    /**
      * @param array $segmentArray
      *
      * @return Segment
@@ -271,7 +252,7 @@ class Segment
     /**
      * @return array
      */
-    public function torray()
+    public function toArray()
     {
 
         $config = new Configuration(Segment::class);

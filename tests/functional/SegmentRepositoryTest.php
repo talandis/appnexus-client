@@ -10,12 +10,11 @@ use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
 use Prophecy\Argument;
 use Test\FunctionalTestCase;
-use Test\TestCase;
 
 /**
- * Class SegmentRepositoryFunctionTest
+ * Class SegmentRepositoryTest
  */
-class SegmentRepositoryFunctionTest extends FunctionalTestCase
+class SegmentRepositoryTest extends FunctionalTestCase
 {
 
     /**

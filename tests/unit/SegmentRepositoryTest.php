@@ -48,7 +48,7 @@ class SegmentRepositoryTest extends TestCase
         $fakeResponse->getBody()->willReturn($stream->reveal());
 
         $payload = [
-            'segment' => $segment->torray(),
+            'segment' => $segment->toArray(),
         ];
 
         $client->request('POST', Argument::any(), ['body' => json_encode($payload)])
@@ -59,6 +59,83 @@ class SegmentRepositoryTest extends TestCase
 
         $this->assertTrue($repositoryResponse->isSuccessful());
         $this->assertEquals(5012, $segment->getId());
+
+    }
+
+    /**
+     * @test
+     */
+    public function update_will_edit_an_existing_segment()
+    {
+
+        $client = $this->prophesize(Auth::class);
+
+        $repository = new SegmentRepository($client->reveal());
+
+        $segment = new Segment();
+        $segment->setName('Test segment');
+        $segment->setId(123456);
+
+        $responseBody = json_encode(
+            [
+                'response' => [
+                    'status' => 'OK',
+                ],
+            ]
+        );
+
+        $fakeResponse = $this->prophesize(Response::class);
+        $stream = $this->prophesize(Stream::class);
+        $stream->getContents()->willReturn($responseBody);
+        $stream->rewind()->willReturn(null)->shouldBeCalled();
+        $fakeResponse->getBody()->willReturn($stream->reveal());
+
+        $payload = [
+            'segment' => $segment->toArray(),
+        ];
+
+        $client->request('PUT', Argument::any(), ['body' => json_encode($payload)])
+               ->willReturn($fakeResponse)
+               ->shouldBeCalled();
+
+        $repositoryResponse = $repository->update($segment);
+
+        $this->assertTrue($repositoryResponse->isSuccessful());
+
+    }
+
+    /**
+     * @test
+     */
+    public function remove_will_remove_an_existing_segment()
+    {
+
+        $client = $this->prophesize(Auth::class);
+        $repository = new SegmentRepository($client->reveal());
+
+        $id = '12346';
+
+        $responseBody = json_encode(
+            [
+                'response' => [
+                    'status' => 'OK',
+                ],
+            ]
+        );
+
+        $fakeResponse = $this->prophesize(Response::class);
+        $stream = $this->prophesize(Stream::class);
+        $stream->getContents()->willReturn($responseBody);
+        $stream->rewind()->willReturn(null)->shouldBeCalled();
+        $fakeResponse->getBody()->willReturn($stream->reveal());
+
+        $client->request('DELETE', Argument::containingString($id))
+               ->willReturn($fakeResponse)
+               ->shouldBeCalled();
+
+        $repositoryResponse = $repository->remove($id, 'member_id');
+
+        $this->assertTrue($repositoryResponse->isSuccessful());
 
     }
 

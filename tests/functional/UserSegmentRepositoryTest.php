@@ -26,6 +26,8 @@ class UserSegmentRepositoryTest extends FunctionalTestCase
     public function test()
     {
 
+        $this->markTestIncomplete('to do');
+
         $repository = new UserSegmentRepository($this->getAuth());
 
         $fileAsString = "5727816213491965430,78610639, 'it.gender.male';7776000;1458191702;0;0\n";

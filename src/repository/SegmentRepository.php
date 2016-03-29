@@ -57,7 +57,7 @@ class SegmentRepository
         $compiledUrl = self::BASE_URL.$segment->getMemberId();
 
         $payload = [
-            'segment' => $segment->torray(),
+            'segment' => $segment->toArray(),
         ];
 
         $response = $this->client->request('POST', $compiledUrl, ['body' => json_encode($payload)]);
@@ -116,25 +116,12 @@ class SegmentRepository
         $compiledUrl = self::BASE_URL.$segment->getMemberId().'/'.$segment->getId();
 
         $payload = [
-            'segment' => $segment->torray(),
+            'segment' => $segment->toArray(),
         ];
 
         $response = $this->client->request('PUT', $compiledUrl, ['body' => json_encode($payload)]);
 
         $repositoryResponse = RepositoryResponse::fromResponse($response);
-
-        if ($repositoryResponse->isSuccessful()) {
-
-            $stream = $response->getBody();
-            $responseContent = json_decode($stream->getContents(), true);
-            $stream->rewind();
-
-            if (!(isset($responseContent['response']['segment']['id']))) {
-                throw RepositoryException::wrongFormat(serialize($responseContent));
-            }
-
-            $segment->setId($responseContent['response']['segment']['id']);
-        }
 
         return $repositoryResponse;
 
