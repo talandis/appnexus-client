@@ -11,6 +11,8 @@ class AuthException extends \Exception
     const DEFAULT_MESSAGE = "Something wrong with the autentication: ";
 
     /**
+     * @param $reason
+     *
      * @return AuthException
      */
     public static function authFailed($reason)

@@ -3,4 +3,4 @@
 [![Build Status](https://scrutinizer-ci.com/g/Audiens/appnexus-client/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Audiens/appnexus-client/build-status/master)
 [![Code Climate](https://codeclimate.com/github/Audiens/appnexus-client/badges/gpa.svg)](https://codeclimate.com/github/Audiens/appnexus-client)
 [![Issue Count](https://codeclimate.com/github/Audiens/appnexus-client/badges/issue_count.svg)](https://codeclimate.com/github/Audiens/appnexus-client)
-
+[![Coverage Status](https://coveralls.io/repos/github/Audiens/appnexus-client/badge.svg?branch=master)](https://coveralls.io/github/Audiens/appnexus-client?branch=master)

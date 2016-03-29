@@ -9,6 +9,8 @@ class RepositoryException extends \Exception
 {
 
     /**
+     * @param $responseContent
+     *
      * @return RepositoryException
      */
     public static function wrongFormat($responseContent)

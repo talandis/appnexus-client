@@ -85,33 +85,6 @@ class SegmentRepository
      * @param $id
      * @param $memberId
      *
-     * @return Segment|null
-     */
-    public function findOneById($id, $memberId)
-    {
-
-        $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
-
-        $response = $this->client->request('GET', $compiledUrl);
-
-        $repositoryResponse = RepositoryResponse::fromResponse($response);
-
-        if (!$repositoryResponse->isSuccessful()) {
-            return null;
-        }
-
-        $stream = $response->getBody();
-        $responseContent = json_decode($stream->getContents(), true);
-        $stream->rewind();
-
-        return Segment::fromArray($responseContent['response']['segment']);
-
-    }
-
-    /**
-     * @param $id
-     * @param $memberId
-     *
      * @return RepositoryResponse
      */
     public function remove($id, $memberId)
@@ -124,53 +97,6 @@ class SegmentRepository
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         return $repositoryResponse;
-
-    }
-
-    /**
-     * @param     $memberId
-     * @param int $start
-     * @param int $maxResults
-     *
-     * @return Segment|null
-     */
-    public function findAll($memberId, $start = 0, $maxResults = 100)
-    {
-
-        if ($this->isCacheEnabled()) {
-            $cacheKey = self::CACHE_NAMESPACE.sha1($memberId.$start.$maxResults);
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
-            }
-
-        }
-
-        $compiledUrl = self::BASE_URL.$memberId."?start_element=$start&num_elements=$maxResults";
-
-        $response = $this->client->request('GET', $compiledUrl);
-
-        $repositoryResponse = RepositoryResponse::fromResponse($response);
-
-        if (!$repositoryResponse->isSuccessful()) {
-            return null;
-        }
-
-        $stream = $response->getBody();
-        $responseContent = json_decode($stream->getContents(), true);
-        $stream->rewind();
-
-        $result = [];
-
-        foreach ($responseContent['response']['segments'] as $segmentArray) {
-            $result[] = Segment::fromArray($segmentArray);
-        }
-
-
-        if ($this->isCacheEnabled()) {
-            $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
-        }
-
-        return $result;
 
     }
 
@@ -211,6 +137,80 @@ class SegmentRepository
         }
 
         return $repositoryResponse;
+
+    }
+
+    /**
+     * @param $id
+     * @param $memberId
+     *
+     * @return Segment|null
+     */
+    public function findOneById($id, $memberId)
+    {
+
+        $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
+
+        $response = $this->client->request('GET', $compiledUrl);
+
+        $repositoryResponse = RepositoryResponse::fromResponse($response);
+
+        if (!$repositoryResponse->isSuccessful()) {
+            return null;
+        }
+
+        $stream = $response->getBody();
+        $responseContent = json_decode($stream->getContents(), true);
+        $stream->rewind();
+
+        return Segment::fromArray($responseContent['response']['segment']);
+
+    }
+
+    /**
+     * @param     $memberId
+     * @param int $start
+     * @param int $maxResults
+     *
+     * @return Segment[]|null
+     */
+    public function findAll($memberId, $start = 0, $maxResults = 100)
+    {
+
+        if ($this->isCacheEnabled()) {
+            $cacheKey = self::CACHE_NAMESPACE.sha1($memberId.$start.$maxResults);
+            if ($this->cache->contains($cacheKey)) {
+                return $this->cache->fetch($cacheKey);
+            }
+
+        }
+
+        $compiledUrl = self::BASE_URL.$memberId."?start_element=$start&num_elements=$maxResults";
+
+        $response = $this->client->request('GET', $compiledUrl);
+
+        $repositoryResponse = RepositoryResponse::fromResponse($response);
+
+        if (!$repositoryResponse->isSuccessful()) {
+            return null;
+        }
+
+        $stream = $response->getBody();
+        $responseContent = json_decode($stream->getContents(), true);
+        $stream->rewind();
+
+        $result = [];
+
+        foreach ($responseContent['response']['segments'] as $segmentArray) {
+            $result[] = Segment::fromArray($segmentArray);
+        }
+
+
+        if ($this->isCacheEnabled()) {
+            $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
+        }
+
+        return $result;
 
     }
 

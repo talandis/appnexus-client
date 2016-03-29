@@ -1,13 +1,15 @@
 <?php
 
-namespace Test;
+namespace Test\unit;
 
 use Audiens\AppnexusClient\Auth;
+use Audiens\AppnexusClient\authentication\AuthStrategyInterface;
 use Doctrine\Common\Cache\CacheProvider;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 use Prophecy\Argument;
+use Test\TestCase;
 
 /**
  * Class AuthTest
@@ -25,13 +27,15 @@ class AuthTest extends TestCase
         $password = 'sample_password';
         $token = 'a_sample_token123456789';
 
-        $tokenReponse = $this->getTokenResponse($token);
-
         $dummyStream = $this->prophesize(Stream::class);
-        $dummyStream->getContents('');
+        $dummyStream->getContents("{'response:{}'}");
 
         $dummyResponse = $this->prophesize(Response::class);
         $dummyResponse->getBody()->willReturn($dummyStream->reveal());
+
+        $authStrategy = $this->prophesize(AuthStrategyInterface::class);
+
+        $authStrategy->authenticate($username, $password, Argument::any())->willReturn($token)->shouldBeCalled();
 
         $expectedRequestOptions = [
             'headers' => [
@@ -44,22 +48,12 @@ class AuthTest extends TestCase
         $client
             ->expects($this->at(0))
             ->method('request')
-            ->with('POST', Auth::BASE_URL, $this->anything())
-            ->willReturn($tokenReponse);
-
-        $client
-            ->expects($this->at(1))
-            ->method('request')
             ->with('POST', 'random_url', $expectedRequestOptions)
             ->willReturn($dummyResponse->reveal());
 
-        $cacheProvider = $this->prophesize(CacheProvider::class);
-
-        $auth = new Auth($username, $password, $client, $cacheProvider->reveal());
-
+        $auth = new Auth($username, $password, $client, $authStrategy->reveal());
         $auth->request('POST', 'random_url', []);
 
-        $dummyStream->rewind()->shouldHaveBeenCalled(); // asserting that the stream will be rewinded
 
     }
 

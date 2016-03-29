@@ -1,6 +1,6 @@
 <?php
 
-namespace Test;
+namespace Test\unit;
 
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\entity\Segment;
@@ -8,6 +8,7 @@ use Audiens\AppnexusClient\repository\SegmentRepository;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 use Prophecy\Argument;
+use Test\TestCase;
 
 /**
  * Class SegmentRepositoryTest

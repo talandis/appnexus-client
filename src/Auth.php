@@ -2,7 +2,7 @@
 
 namespace Audiens\AppnexusClient;
 
-use Audiens\AppnexusClient\exceptions\AuthException;
+use Audiens\AppnexusClient\authentication\AuthStrategyInterface;
 use Doctrine\Common\Cache\Cache;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -24,9 +24,6 @@ class Auth implements ClientInterface
     /** @var  Client */
     protected $client;
 
-    /** @var bool */
-    protected $cacheEnabled = false;
-
     /** @var string */
     protected $token;
 
@@ -36,33 +33,27 @@ class Auth implements ClientInterface
     /** @var string */
     protected $password;
 
-    const BASE_URL = 'https://api.adnxs.com/auth';
-
-    const MEMBER_ID = 3847;
-
-    const CACHE_NAMESPACE  = 'appnexus_auth_token';
-    const TOKEN_EXPIRATION = 110;
+    protected $authStrategy;
 
     /**
-     * Auth constructor.
-     *
-     * @param array           $username
-     * @param                 $password
-     * @param ClientInterface $clientInterface
-     * @param Cache|null      $cache
+     * @param                       $username
+     * @param                       $password
+     * @param ClientInterface       $clientInterface
+     * @param AuthStrategyInterface $authStrategy
      */
-    public function __construct($username, $password, ClientInterface $clientInterface, Cache $cache = null)
-    {
+    public function __construct(
+        $username,
+        $password,
+        ClientInterface $clientInterface,
+        AuthStrategyInterface $authStrategy
+    ) {
         $this->username = $username;
         $this->password = $password;
 
-        $this->cacheEnabled = $cache instanceof Cache;
-        $this->cache = $cache;
-
         $this->client = $clientInterface;
+        $this->authStrategy = $authStrategy;
 
     }
-
 
     /**
      * @param string $method
@@ -74,9 +65,10 @@ class Auth implements ClientInterface
      */
     public function request($method, $uri = null, array $options = [])
     {
+
         $optionForToken = [
             'headers' => [
-                'Authorization' => $this->autenticate(),
+                'Authorization' => $this->authStrategy->authenticate($this->username, $this->password),
             ],
         ];
 
@@ -90,7 +82,7 @@ class Auth implements ClientInterface
 
         $optionForToken = [
             'headers' => [
-                'Authorization' => $this->autenticate(true),
+                'Authorization' => $this->authStrategy->authenticate($this->username, $this->password),
             ],
         ];
 
@@ -100,47 +92,6 @@ class Auth implements ClientInterface
 
     }
 
-    /**
-     * @param bool|false $skipCache
-     *
-     * @return string
-     * @throws AuthException
-     */
-    public function autenticate($skipCache = false)
-    {
-
-        if ($this->cacheEnabled && !$skipCache) {
-            $cacheKey = self::CACHE_NAMESPACE.sha1($this->username.$this->password);
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
-            }
-        }
-
-        $payload = [
-            'auth' => [
-                'username' => $this->username,
-                'password' => $this->password,
-            ],
-        ];
-
-        $response = $this->client->request('POST', self::BASE_URL, ['body' => json_encode($payload)]);
-
-        $content = $response->getBody()->getContents();
-
-        $contentArray = json_decode($content, true);
-
-        if (!isset($contentArray["response"]["token"])) {
-            throw new AuthException($content);
-        }
-
-        $token = $contentArray["response"]["token"];
-
-        if ($this->cacheEnabled) {
-            $this->cache->save($cacheKey, $token, self::TOKEN_EXPIRATION);
-        }
-
-        return $token;
-    }
 
     /**
      * @inheritDoc

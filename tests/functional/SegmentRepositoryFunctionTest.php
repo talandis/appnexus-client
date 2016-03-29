@@ -1,18 +1,21 @@
 <?php
 
-namespace Test;
+namespace Test\functional;
 
 use Audiens\AppnexusClient\Auth;
+use Audiens\AppnexusClient\authentication\AdnxStrategy;
 use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\repository\SegmentRepository;
 use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
 use Prophecy\Argument;
+use Test\FunctionalTestCase;
+use Test\TestCase;
 
 /**
  * Class SegmentRepositoryFunctionTest
  */
-class SegmentRepositoryFunctionTest extends TestCase
+class SegmentRepositoryFunctionTest extends FunctionalTestCase
 {
 
     /**
@@ -21,14 +24,7 @@ class SegmentRepositoryFunctionTest extends TestCase
     public function add_will_create_a_new_segment_and_return_a_repository_response()
     {
 
-        $repository = new SegmentRepository(
-            new Auth(
-                getenv('USERNAME'),
-                getenv('PASSWORD'),
-                new Client(),
-                new FilesystemCache('build')
-            )
-        );
+        $repository = new SegmentRepository($this->getAuth());
 
         $segment = new Segment();
         $segment->setName('Test segment'.uniqid());
@@ -48,14 +44,7 @@ class SegmentRepositoryFunctionTest extends TestCase
      */
     public function find_one_by_id_will_retrive_a_newly_created_segment()
     {
-        $repository = new SegmentRepository(
-            new Auth(
-                getenv('USERNAME'),
-                getenv('PASSWORD'),
-                new Client(),
-                new FilesystemCache('build')
-            )
-        );
+        $repository = new SegmentRepository($this->getAuth());
 
         $segment = new Segment();
 
@@ -82,15 +71,7 @@ class SegmentRepositoryFunctionTest extends TestCase
     public function find_all_will_return_multiple_segments()
     {
 
-        $repository = new SegmentRepository(
-            new Auth(
-                getenv('USERNAME'),
-                getenv('PASSWORD'),
-                new Client(),
-                new FilesystemCache('build')
-            ),
-            new FilesystemCache('build')
-        );
+        $repository = new SegmentRepository($this->getAuth());
 
         $segment = new Segment();
 
@@ -120,15 +101,7 @@ class SegmentRepositoryFunctionTest extends TestCase
     public function delete_will_remove_a_segment()
     {
 
-        $repository = new SegmentRepository(
-            new Auth(
-                getenv('USERNAME'),
-                getenv('PASSWORD'),
-                new Client(),
-                new FilesystemCache('build')
-            ),
-            new FilesystemCache('build')
-        );
+        $repository = new SegmentRepository($this->getAuth());
 
         $segment = new Segment();
 
@@ -157,15 +130,7 @@ class SegmentRepositoryFunctionTest extends TestCase
     public function update_will_edit_an_existing_segment()
     {
 
-        $repository = new SegmentRepository(
-            new Auth(
-                getenv('USERNAME'),
-                getenv('PASSWORD'),
-                new Client(),
-                new FilesystemCache('build')
-            ),
-            new FilesystemCache('build')
-        );
+        $repository = new SegmentRepository($this->getAuth());
 
         $segment = new Segment();
 
@@ -177,12 +142,36 @@ class SegmentRepositoryFunctionTest extends TestCase
         $segment->setMemberId(getenv('MEMBER_ID'));
         $segment->setActive(true);
 
-        $repository->add($segment);
+        $repositoryResponse = $repository->add($segment);
+        $this->assertTrue($repositoryResponse->isSuccessful());
+
         $segment->setPrice(12.11);
-        $repository->update($segment);
+
+        $repositoryResponse = $repository->update($segment);
+        $this->assertTrue($repositoryResponse->isSuccessful());
 
         $this->assertEquals(12.11, $segment->getPrice());
 
+
+    }
+
+
+    /**
+     * @param bool|true $cacheToken
+     *
+     * @return Auth
+     */
+    protected function getAuth($cacheToken = true)
+    {
+
+        $cache = $cacheToken ? new FilesystemCache('build') : null;
+        $client = new Client();
+
+        $authStrategy = new AdnxStrategy(new Client(), $cache);
+
+        $authClient = new Auth(getenv('USERNAME'), getenv('PASSWORD'), $client, $authStrategy);
+
+        return $authClient;
 
     }
 

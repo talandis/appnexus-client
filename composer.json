@@ -17,6 +17,7 @@
     "vlucas/phpdotenv": "^2.2.0"
   },
   "require-dev": {
+    "satooshi/php-coveralls": "^1",
     "phpunit/phpunit": "^5",
     "phing/phing": "^2"
   },
