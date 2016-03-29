@@ -2,6 +2,7 @@
 
 namespace Audiens\AppnexusClient\repository;
 
+use Audiens\AppnexusClient\CacheableInterface;
 use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\exceptions\RepositoryException;
 use Doctrine\Common\Cache\Cache;
@@ -11,7 +12,7 @@ use GuzzleHttp\ClientInterface;
 /**
  * Class SegmentRepository
  */
-class SegmentRepository
+class SegmentRepository implements CacheableInterface
 {
 
     const BASE_URL = 'https://api.adnxs.com/segment/';

@@ -3,7 +3,6 @@
 namespace Audiens\AppnexusClient\repository;
 
 use Audiens\AppnexusClient\Auth;
-use Audiens\AppnexusClient\entity\UserSegment;
 use Doctrine\Common\Cache\Cache;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -15,7 +14,6 @@ class UserSegmentRepository
 {
 
     const BASE_URL = 'http://api.appnexus.com/batch-segment';
-//    const BASE_URL_ADNXS = 'http://sand.api.appnexus.com/batch-segment';
 
     /** @var  \SplQueue */
     protected $userSegments;
