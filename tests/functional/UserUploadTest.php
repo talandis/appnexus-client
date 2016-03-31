@@ -33,15 +33,15 @@ class UserUploadTest extends FunctionalTestCase
     }
 
     /**
- * @test
- */
+     * @test
+     */
     public function upload_will_return_a_job_status()
     {
 
         $repository = new UserUpload($this->getAuth());
 
         $fileAsString = "5727816213491965430,78610639,'it.gender.male';7776000;1458191702;0;0\n";
-        $jobStatus = $repository->upload($fileAsString, getenv('MEMBER_ID'));
+        $jobStatus = $repository->upload(getenv('MEMBER_ID'), $fileAsString);
 
         $this->assertNotNull($jobStatus->getId());
         $this->assertNotNull($jobStatus->getPhase());

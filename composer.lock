@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "220b32d442ec6166c79d9386130764f6",
-    "content-hash": "259ce8c68f1f415baa27d80cbb54bb7b",
+    "hash": "08617ae00f5b936a1845f354bee827c2",
+    "content-hash": "8a0480c04c74f225210c3b05fbd607c7",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -732,6 +732,67 @@
                 "instantiate"
             ],
             "time": "2015-06-14 21:17:01"
+        },
+        {
+            "name": "facile-it/paraunit",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/facile-it/paraunit.git",
+                "reference": "bddd6133749f1ef3623320c594894b1add6beb16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/facile-it/paraunit/zipball/bddd6133749f1ef3623320c594894b1add6beb16",
+                "reference": "bddd6133749f1ef3623320c594894b1add6beb16",
+                "shasum": ""
+            },
+            "require": {
+                "phpunit/phpunit": ">=4.6,<6",
+                "symfony/config": ">=2.3,<3.1",
+                "symfony/console": ">=2.3,<3.1",
+                "symfony/dependency-injection": ">=2.3,<3.1",
+                "symfony/event-dispatcher": ">=2.3,<3.1",
+                "symfony/process": ">=2.3,<3.1"
+            },
+            "require-dev": {
+                "satooshi/php-coveralls": "~1.0",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "suggest": {
+                "facile-it/paraunit-testcase": "Useful for Symfony2+Doctrine functional testing, providing DB isolation"
+            },
+            "bin": [
+                "src/Paraunit/Bin/paraunit"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Paraunit\\": "src/Paraunit"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Francesco Panina",
+                    "email": "francesco.panina@gmail.com"
+                },
+                {
+                    "name": "Alessandro Lai",
+                    "email": "alessandro.lai85@gmail.com"
+                }
+            ],
+            "description": "paraunit",
+            "homepage": "http://github.com/facile-it/paraunit",
+            "keywords": [
+                "parallel test",
+                "phpunit",
+                "testing"
+            ],
+            "time": "2016-03-26 11:05:21"
         },
         {
             "name": "guzzle/guzzle",
@@ -2196,6 +2257,65 @@
             "time": "2016-03-16 17:00:50"
         },
         {
+            "name": "symfony/dependency-injection",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dependency-injection.git",
+                "reference": "6a9058101b591edced21ca3c83c80a3978f5c6b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/6a9058101b591edced21ca3c83c80a3978f5c6b0",
+                "reference": "6a9058101b591edced21ca3c83c80a3978f5c6b0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "symfony/config": "~2.8|~3.0",
+                "symfony/expression-language": "~2.8|~3.0",
+                "symfony/yaml": "~2.8|~3.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-03-30 10:41:14"
+        },
+        {
             "name": "symfony/event-dispatcher",
             "version": "v2.8.4",
             "source": {
@@ -2364,6 +2484,55 @@
             "time": "2016-01-20 09:13:37"
         },
         {
+            "name": "symfony/process",
+            "version": "v3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "e6f1f98bbd355d209a992bfff45e7edfbd4a0776"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/e6f1f98bbd355d209a992bfff45e7edfbd4a0776",
+                "reference": "e6f1f98bbd355d209a992bfff45e7edfbd4a0776",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-03-30 10:41:14"
+        },
+        {
             "name": "symfony/stopwatch",
             "version": "v3.0.4",
             "source": {
@@ -2464,7 +2633,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "facile-it/paraunit": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

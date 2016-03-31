@@ -2,6 +2,7 @@
 
 namespace Audiens\AppnexusClient\repository;
 
+use Audiens\AppnexusClient\entity\Error;
 use GuzzleHttp\Psr7\Response;
 
 /**
@@ -22,6 +23,9 @@ class RepositoryResponse
 
     /** @var  string */
     protected $response;
+
+    /** @var  Error */
+    protected $error;
 
     /**
      * @return string
@@ -64,6 +68,23 @@ class RepositoryResponse
     }
 
     /**
+     * @return Error
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @param Error $error
+     */
+    public function setError(Error $error)
+    {
+        $this->error = $error;
+    }
+
+
+    /**
      * @param Response $response
      *
      * @return RepositoryResponse
@@ -71,19 +92,40 @@ class RepositoryResponse
     public static function fromResponse(Response $response)
     {
         $self = new self();
+        $error = new Error();
 
-        $responseBody = $response->getBody()->getContents();
-        $response->getBody()->rewind();
+        $self->setSuccessful(false);
 
-        $self->setResponse($responseBody);
+        $responseContent = self::getResponseContent($response);
+        $self->setResponse($responseContent);
 
-        $responseArray = json_decode($responseBody, true);
+        $responseArray = json_decode($responseContent, true);
 
         if (isset($responseArray['response']['status'])) {
             $self->setSuccessful($responseArray['response']['status'] == self::STATUS_SUCCESS);
         }
 
+        if (!$self->isSuccessful()) {
+            $error = Error::fromArray($responseArray['response']);
+        }
+
+        $self->setError($error);
+
         return $self;
+
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return string
+     */
+    private static function getResponseContent(Response $response)
+    {
+        $responseContent = $response->getBody()->getContents();
+        $response->getBody()->rewind();
+
+        return $responseContent;
 
     }
 }

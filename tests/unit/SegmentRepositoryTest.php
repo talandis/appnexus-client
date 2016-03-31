@@ -133,7 +133,7 @@ class SegmentRepositoryTest extends TestCase
                ->willReturn($fakeResponse)
                ->shouldBeCalled();
 
-        $repositoryResponse = $repository->remove($id, 'member_id');
+        $repositoryResponse = $repository->remove('member_id',$id);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
 

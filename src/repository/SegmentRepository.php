@@ -88,7 +88,7 @@ class SegmentRepository implements CacheableInterface
      *
      * @return RepositoryResponse
      */
-    public function remove($id, $memberId)
+    public function remove($memberId, $id)
     {
 
         $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
@@ -134,7 +134,7 @@ class SegmentRepository implements CacheableInterface
      *
      * @return Segment|null
      */
-    public function findOneById($id, $memberId)
+    public function findOneById($memberId, $id)
     {
 
         $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
@@ -160,7 +160,8 @@ class SegmentRepository implements CacheableInterface
      * @param int $start
      * @param int $maxResults
      *
-     * @return Segment[]|null
+     * @return array|mixed|null
+     * @throws \Exception
      */
     public function findAll($memberId, $start = 0, $maxResults = 100)
     {
@@ -188,6 +189,10 @@ class SegmentRepository implements CacheableInterface
         $stream->rewind();
 
         $result = [];
+
+        if (!$responseContent['response']['segments']) {
+            throw new \Exception('name me -missing index');
+        }
 
         foreach ($responseContent['response']['segments'] as $segmentArray) {
             $result[] = Segment::fromArray($segmentArray);

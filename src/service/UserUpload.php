@@ -59,7 +59,7 @@ class UserUpload implements CacheableInterface
      * @return UploadJobStatus
      * @throws \Exception
      */
-    public function upload($fileAsString, $memberId)
+    public function upload($memberId, $fileAsString)
     {
 
         $tempFile = tmpfile();
@@ -96,7 +96,7 @@ class UserUpload implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if (!$repositoryResponse->isSuccessful()) {
-            throw new \Exception('name me - not success');
+            throw new \Exception('name me - not success'. $repositoryResponse->getError()->getError());
         }
 
         if (!isset($repositoryResponse->getResponseAsArray()['response']['batch_segment_upload_job'])) {
@@ -112,22 +112,22 @@ class UserUpload implements CacheableInterface
     }
 
     /**
-     * @param UploadTicket $uploadJob
+     * @param UploadTicket $uploadTicket
      *
      * @return UploadJobStatus $uploadJobStatus
      * @throws \Exception
      */
-    public function getJobStatus(UploadTicket $uploadJob)
+    public function getJobStatus(UploadTicket $uploadTicket)
     {
 
-        $compiledUrl = self::BASE_URL."?member_id={$uploadJob->getMemberId()}&job_id={$uploadJob->getJobId()}";
+        $compiledUrl = self::BASE_URL."?member_id={$uploadTicket->getMemberId()}&job_id={$uploadTicket->getJobId()}";
 
         $response = $this->client->request('GET', $compiledUrl);
 
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if (!$repositoryResponse->isSuccessful()) {
-            throw new \Exception('name me - not success');
+            throw new \Exception('name me - not success'. $repositoryResponse->getError()->getError());
         }
 
         if (!isset($repositoryResponse->getResponseAsArray()['response']['batch_segment_upload_job'][0])) {
