@@ -19,5 +19,4 @@ class AuthException extends \Exception
     {
         return new self(self::DEFAULT_MESSAGE.$reason, 0, null);
     }
-
 }

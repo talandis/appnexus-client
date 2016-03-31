@@ -2,13 +2,13 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-use GeneratedHydrator\Configuration;
-
 /**
  * Class Segment
  */
 class Segment
 {
+
+    use HydratableTrait;
 
     /** @var  int */
     protected $id;
@@ -230,37 +230,4 @@ class Segment
     {
         $this->last_activity = $lastActivity;
     }
-
-    /**
-     * @param array $segmentArray
-     *
-     * @return Segment
-     */
-    public static function fromArray(array $segmentArray)
-    {
-
-        $config = new Configuration(Segment::class);
-        $hydratorClass = $config->createFactory()->getHydratorClass();
-        $hydrator = new $hydratorClass();
-        $segment = new self();
-
-        $hydrator->hydrate($segmentArray, $segment);
-
-        return $segment;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-
-        $config = new Configuration(Segment::class);
-        $hydratorClass = $config->createFactory()->getHydratorClass();
-        $hydrator = new $hydratorClass();
-
-        return $hydrator->extract($this);
-
-    }
-
 }

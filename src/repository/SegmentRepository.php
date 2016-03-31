@@ -165,12 +165,12 @@ class SegmentRepository implements CacheableInterface
     public function findAll($memberId, $start = 0, $maxResults = 100)
     {
 
+        $cacheKey = self::CACHE_NAMESPACE.sha1($memberId.$start.$maxResults);
+
         if ($this->isCacheEnabled()) {
-            $cacheKey = self::CACHE_NAMESPACE.sha1($memberId.$start.$maxResults);
             if ($this->cache->contains($cacheKey)) {
                 return $this->cache->fetch($cacheKey);
             }
-
         }
 
         $compiledUrl = self::BASE_URL.$memberId."?start_element=$start&num_elements=$maxResults";
@@ -219,5 +219,4 @@ class SegmentRepository implements CacheableInterface
     {
         $this->cacheEnabled = true;
     }
-
 }

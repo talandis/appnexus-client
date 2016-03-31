@@ -22,5 +22,4 @@ interface CacheableInterface
      * @return void
      */
     public function enableCache();
-
 }

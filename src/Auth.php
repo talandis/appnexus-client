@@ -141,5 +141,4 @@ class Auth implements ClientInterface
         return isset($content['response']['error_id']) && $content['response']['error_id'] == 'NOAUTH';
 
     }
-
 }

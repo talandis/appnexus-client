@@ -19,9 +19,17 @@
   "require-dev": {
     "satooshi/php-coveralls": "^1",
     "phpunit/phpunit": "^5",
+    "squizlabs/php_codesniffer": "^2",
     "phing/phing": "^2"
   },
-  "scripts": {},
+  "scripts": {
+    "post-install-cmd": [
+      "bash contrib/setup.sh"
+    ],
+    "post-update-cmd": [
+      "bash contrib/setup.sh"
+    ]
+  },
   "config": {
     "bin-dir": "bin"
   },

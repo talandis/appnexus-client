@@ -18,11 +18,10 @@ interface AuthStrategyInterface
      * @throws AuthException
      * @return string the token
      */
-    function authenticate($username, $password, $cache = true);
+    public function authenticate($username, $password, $cache = true);
 
     /**
      * @return string
      */
-    function getSlug();
-
+    public function getSlug();
 }

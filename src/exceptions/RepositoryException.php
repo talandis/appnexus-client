@@ -17,5 +17,4 @@ class RepositoryException extends \Exception
     {
         return new self($responseContent);
     }
-
 }

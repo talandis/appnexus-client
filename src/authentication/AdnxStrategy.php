@@ -83,10 +83,8 @@ class AdnxStrategy implements AuthStrategyInterface
     /**
      * @return string
      */
-    function getSlug()
+    public function getSlug()
     {
         return self::NAME;
     }
-
-
 }
