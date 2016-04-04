@@ -40,7 +40,7 @@ class UserUploadTest extends FunctionalTestCase
 
         $repository = new UserUpload($this->getAuth());
 
-        $fileAsString = "5727816213491965430,78610639,'it.gender.male';7776000;1458191702;0;0\n";
+        $fileAsString = "5727816213491965430,78610639;'it.gender.male';7776000;1458191702;0;0\n";
         $jobStatus = $repository->upload(getenv('MEMBER_ID'), $fileAsString);
 
         $this->assertNotNull($jobStatus->getId());

@@ -123,6 +123,18 @@ class AppnexusFacade implements CacheableInterface
     }
 
     /**
+     * @param int $start
+     * @param int $maxResults
+     *
+     * @return \Audiens\AppnexusClient\entity\UploadJobStatus[]
+     * @throws \Audiens\AppnexusClient\exceptions\RepositoryException
+     */
+    public function getUploadHistory($start = 0, $maxResults = 100)
+    {
+        return $this->userUpload->getUploadHistory($this->memberId, $start, $maxResults);
+    }
+
+    /**
      * @return \Audiens\AppnexusClient\entity\UploadTicket
      * @throws \Exception
      */

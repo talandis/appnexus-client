@@ -2,34 +2,13 @@
 
 namespace Audiens\AppnexusClient\exceptions;
 
-use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 
 /**
- * Class RepositoryException
+ * Class UploadException
  */
-class RepositoryException extends \Exception
+class UploadException extends \Exception
 {
-
-    /**
-     * @param $responseContent
-     *
-     * @return RepositoryException
-     */
-    public static function wrongFormat($responseContent)
-    {
-        return new self($responseContent);
-    }
-
-    /**
-     * @param Segment $segment
-     *
-     * @return RepositoryException
-     */
-    public static function missingId(Segment $segment)
-    {
-        return new self('Missing segment id for '.serialize($segment->getCode()));
-    }
 
     /**
      * @param RepositoryResponse $repositoryResponse

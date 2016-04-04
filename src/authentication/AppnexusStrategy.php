@@ -45,7 +45,7 @@ class AppnexusStrategy implements AuthStrategyInterface
     public function authenticate($username, $password, $cache = true)
     {
 
-        $cacheKey = self::CACHE_NAMESPACE.sha1($username.$password);
+        $cacheKey = self::CACHE_NAMESPACE.sha1($username.$password.self::BASE_URL);
 
         if ($cache) {
             if ($this->cache->contains($cacheKey)) {

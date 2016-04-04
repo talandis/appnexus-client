@@ -5,7 +5,7 @@ namespace Audiens\AppnexusClient\entity;
 /**
  * Class UploadJobStatus
  */
-class UploadJobStatus
+class UploadJobStatus extends UploadTicket
 {
 
     use HydratableTrait;

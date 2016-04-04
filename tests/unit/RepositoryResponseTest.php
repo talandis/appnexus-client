@@ -16,11 +16,12 @@ class RepositoryResponseTest extends TestCase
 
     /**
      * @test
+     * @dataProvider wrongResponseProvider
      */
-    public function it_should_report_a_failure_if_the_response_is_not_ok()
+    public function it_should_report_a_failure_if_the_response_is_not_ok(Response $response)
     {
 
-        $repositoryResponse = RepositoryResponse::fromResponse($this->getFailedResponse());
+        $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         $this->assertFalse($repositoryResponse->isSuccessful());
 
@@ -53,16 +54,28 @@ class RepositoryResponseTest extends TestCase
 
     }
 
-
     /**
      * @return Response
      */
-    protected function getFailedResponse()
+    public function wrongResponseProvider()
     {
 
-        $responseBody = '{"response":{"error_id":"SYNTAX","error":"Invalid path \/segment - member is required","error_description":null,"error_code":null,"service":"segment","method":"POST","dbg":{"instance":"40.api.prod.ams1","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":1,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":1,"write_limit":1073741824,"write_limit_seconds":60,"parent_dbg_info":{"instance":"44.bm-api.prod.nym2","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":1,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":1,"write_limit":1073741824,"write_limit_seconds":60,"time":48.772096633911,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732144.0725},"time":278.25713157654,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732143.8902}}}';
-
-        return new Response(200, [], $responseBody);
+        return [
+            [
+                new Response(
+                    200,
+                    [],
+                    '{"response":{"error_id":"SYNTAX","error":"Invalid path \/segment - member is required","error_description":null,"error_code":null,"service":"segment","method":"POST","dbg":{"instance":"40.api.prod.ams1","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":1,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":1,"write_limit":1073741824,"write_limit_seconds":60,"parent_dbg_info":{"instance":"44.bm-api.prod.nym2","slave_hit":false,"db":"master","user::reads":0,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":1,"user::write_limit":60,"user::write_limit_seconds":60,"reads":0,"read_limit":1073741824,"read_limit_seconds":60,"writes":1,"write_limit":1073741824,"write_limit_seconds":60,"time":48.772096633911,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732144.0725},"time":278.25713157654,"version":"1.16.497","warnings":[],"slave_lag":0,"start_microtime":1458732143.8902}}}'
+                ),
+            ],
+            [
+                new Response(
+                    200,
+                    [],
+                    '{"response":{"error_id":"SYNTAX","error":"Invalid input for field custom filter which expects type int","error_description":null,"error_code":"CAST_ERROR","service":"batch-segment","method":"GET","dbg":{"instance":"40.api.prod.ams1","slave_hit":true,"db":"10.2.78.203","user::reads":1,"user::read_limit":100,"user::read_limit_seconds":60,"user::writes":2,"user::write_limit":60,"user::write_limit_seconds":60,"reads":1,"read_limit":1073741824,"read_limit_seconds":60,"writes":2,"write_limit":1073741824,"write_limit_seconds":60,"time":106.05382919312,"version":"1.16.516","warnings":["Caught user 183216 (member 3847) trying to cast custom filter string to a int in service batch_segment"],"slave_lag":0,"start_microtime":1459766971.6139}}}'
+                ),
+            ],
+        ];
 
     }
 

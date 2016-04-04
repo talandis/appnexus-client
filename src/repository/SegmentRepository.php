@@ -111,7 +111,7 @@ class SegmentRepository implements CacheableInterface
     {
 
         if (!$segment->getId()) {
-            throw new \Exception('name me - missing id');
+            throw RepositoryException::missingId($segment);
         }
 
         $compiledUrl = self::BASE_URL.$segment->getMemberId().'/'.$segment->getId();
@@ -181,7 +181,7 @@ class SegmentRepository implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if (!$repositoryResponse->isSuccessful()) {
-            return null;
+            throw RepositoryException::failed($repositoryResponse);
         }
 
         $stream = $response->getBody();
@@ -191,13 +191,12 @@ class SegmentRepository implements CacheableInterface
         $result = [];
 
         if (!$responseContent['response']['segments']) {
-            throw new \Exception('name me -missing index');
+            throw RepositoryException::missingIndex('response->segments');
         }
 
         foreach ($responseContent['response']['segments'] as $segmentArray) {
             $result[] = Segment::fromArray($segmentArray);
         }
-
 
         if ($this->isCacheEnabled()) {
             $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);

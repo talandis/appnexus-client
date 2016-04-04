@@ -19,7 +19,7 @@ class RepositoryResponse
     const STATUS_SUCCESS = 'OK';
 
     /** @var bool */
-    protected $successful = true;
+    protected $successful = false;
 
     /** @var  string */
     protected $response;
@@ -30,7 +30,7 @@ class RepositoryResponse
     /**
      * @return string
      */
-    public function getResponse($asArray = false)
+    public function getResponse()
     {
         return $this->response;
     }

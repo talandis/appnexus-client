@@ -4,8 +4,10 @@ namespace Audiens\AppnexusClient\service;
 
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\CacheableInterface;
+use Audiens\AppnexusClient\entity\UploadJob;
 use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\entity\UploadJobStatus;
+use Audiens\AppnexusClient\exceptions\UploadException;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 use Doctrine\Common\Cache\Cache;
 use GuzzleHttp\Client;
@@ -73,7 +75,7 @@ class UserUpload implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if (!$repositoryResponse->isSuccessful()) {
-            throw new \Exception('name me - not success');
+            throw UploadException::failed($repositoryResponse);
         }
 
         return $this->getJobStatus($job);
@@ -96,11 +98,11 @@ class UserUpload implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if (!$repositoryResponse->isSuccessful()) {
-            throw new \Exception('name me - not success'. $repositoryResponse->getError()->getError());
+            throw UploadException::failed($repositoryResponse);
         }
 
         if (!isset($repositoryResponse->getResponseAsArray()['response']['batch_segment_upload_job'])) {
-            throw new \Exception('name me - not index');
+            throw UploadException::missingIndex('response->batch_segment_upload_job');
         }
 
         $uploadJob = UploadTicket::fromArray(
@@ -114,7 +116,7 @@ class UserUpload implements CacheableInterface
     /**
      * @param UploadTicket $uploadTicket
      *
-     * @return UploadJobStatus $uploadJobStatus
+     * @return UploadJob $uploadJob
      * @throws \Exception
      */
     public function getJobStatus(UploadTicket $uploadTicket)
@@ -127,11 +129,11 @@ class UserUpload implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if (!$repositoryResponse->isSuccessful()) {
-            throw new \Exception('name me - not success'. $repositoryResponse->getError()->getError());
+            throw UploadException::failed($repositoryResponse);
         }
 
         if (!isset($repositoryResponse->getResponseAsArray()['response']['batch_segment_upload_job'][0])) {
-            throw new \Exception('name me - not index');
+            throw UploadException::missingIndex('response->batch_segment_upload_job->0');
         }
 
         $uploadJobStatus = UploadJobStatus::fromArray(
@@ -139,6 +141,44 @@ class UserUpload implements CacheableInterface
         );
 
         return $uploadJobStatus;
+
+    }
+
+
+    /**
+     * @param     $memberId
+     * @param int $start
+     * @param int $maxResults
+     *
+     * @return UploadJobStatus[]
+     * @throws \Exception
+     */
+    public function getUploadHistory($memberId, $start = 0, $maxResults = 100)
+    {
+
+        $compiledUrl = self::BASE_URL."?member_id=$memberId&start_element=$start&num_elements=$maxResults";
+
+        $response = $this->client->request('GET', $compiledUrl);
+
+        $repositoryResponse = RepositoryResponse::fromResponse($response);
+
+        if (!$repositoryResponse->isSuccessful()) {
+            throw UploadException::failed($repositoryResponse);
+        }
+
+        if (!isset($repositoryResponse->getResponseAsArray()['response']['batch_segment_upload_job'][0])) {
+            throw UploadException::missingIndex('response->batch_segment_upload_job->0');
+        }
+
+        $uploadStatuses = [];
+
+        $responseAsArray = $repositoryResponse->getResponseAsArray();
+
+        foreach ($responseAsArray['response']['batch_segment_upload_job'] as $response) {
+            $uploadStatuses[] = UploadJobStatus::fromArray($response);
+        }
+
+        return $uploadStatuses;
 
     }
 
