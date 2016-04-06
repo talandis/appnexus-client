@@ -8,6 +8,8 @@ namespace Audiens\AppnexusClient\entity;
 class UploadJobStatus extends UploadTicket
 {
 
+    const PHASE_COMPLETED = 'completed';
+
     use HydratableTrait;
 
     protected $phase;
@@ -29,11 +31,7 @@ class UploadJobStatus extends UploadTicket
     protected $num_other_error;
     protected $error_log_lines;
     protected $segment_log_lines;
-    protected $id;
-    protected $job_id;
-    protected $member_id;
     protected $created_on;
-    protected $last_modified;
 
     /**
      * @return mixed
@@ -417,5 +415,31 @@ class UploadJobStatus extends UploadTicket
     public function setLastModified($last_modified)
     {
         $this->last_modified = $last_modified;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCompeted()
+    {
+        return $this->phase == self::PHASE_COMPLETED;
+    }
+
+    /**
+     * @param array $objectArray
+     *
+     * @return UploadJobStatus
+     */
+    public static function fromArray(array $objectArray)
+    {
+        $object = new self();
+
+        if (!isset($objectArray['upload_url'])) {
+            $objectArray['upload_url'] = '';
+        }
+
+        self::getHydrator()->hydrate($objectArray, $object);
+
+        return $object;
     }
 }

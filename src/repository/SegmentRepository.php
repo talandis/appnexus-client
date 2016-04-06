@@ -50,7 +50,7 @@ class SegmentRepository implements CacheableInterface
      * @param Segment $segment
      *
      * @return RepositoryResponse
-     * @throws \Exception
+     * @throws RepositoryException
      */
     public function add(Segment $segment)
     {
@@ -83,8 +83,8 @@ class SegmentRepository implements CacheableInterface
     }
 
     /**
-     * @param $id
      * @param $memberId
+     * @param $id
      *
      * @return RepositoryResponse
      */
@@ -105,7 +105,7 @@ class SegmentRepository implements CacheableInterface
      * @param Segment $segment
      *
      * @return RepositoryResponse
-     * @throws \Exception
+     * @throws RepositoryException
      */
     public function update(Segment $segment)
     {
@@ -160,8 +160,8 @@ class SegmentRepository implements CacheableInterface
      * @param int $start
      * @param int $maxResults
      *
-     * @return array|mixed|null
-     * @throws \Exception
+     * @return Segment[]|null
+     * @throws RepositoryException
      */
     public function findAll($memberId, $start = 0, $maxResults = 100)
     {
@@ -191,7 +191,7 @@ class SegmentRepository implements CacheableInterface
         $result = [];
 
         if (!$responseContent['response']['segments']) {
-            throw RepositoryException::missingIndex('response->segments');
+            $responseContent['response']['segments'] = [];
         }
 
         foreach ($responseContent['response']['segments'] as $segmentArray) {

@@ -4,9 +4,9 @@ namespace Audiens\AppnexusClient\service;
 
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\CacheableInterface;
-use Audiens\AppnexusClient\entity\UploadJob;
 use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\entity\UploadJobStatus;
+use Audiens\AppnexusClient\exceptions\RepositoryException;
 use Audiens\AppnexusClient\exceptions\UploadException;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 use Doctrine\Common\Cache\Cache;
@@ -55,14 +55,18 @@ class UserUpload implements CacheableInterface
     }
 
     /**
-     * @param $fileAsString
      * @param $memberId
+     * @param $fileAsString
      *
      * @return UploadJobStatus
-     * @throws \Exception
+     * @throws UploadException
+     * @throws RepositoryException
      */
     public function upload($memberId, $fileAsString)
     {
+        if (empty($fileAsString)) {
+            throw UploadException::emptyFile();
+        }
 
         $tempFile = tmpfile();
         fwrite($tempFile, $fileAsString);
@@ -85,8 +89,8 @@ class UserUpload implements CacheableInterface
     /**
      * @param $memberId
      *
-     * @return UploadTicket
-     * @throws \Exception
+     * @return UploadJobStatus
+     * @throws RepositoryException
      */
     public function getUploadTicket($memberId)
     {
@@ -116,8 +120,8 @@ class UserUpload implements CacheableInterface
     /**
      * @param UploadTicket $uploadTicket
      *
-     * @return UploadJob $uploadJob
-     * @throws \Exception
+     * @return UploadJobStatus
+     * @throws \Audiens\AppnexusClient\exceptions\RepositoryException
      */
     public function getJobStatus(UploadTicket $uploadTicket)
     {

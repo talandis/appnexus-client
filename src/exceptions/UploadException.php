@@ -27,6 +27,14 @@ class UploadException extends \Exception
      */
     public static function missingIndex($missingIndex)
     {
-        return new self('Invalid reposnse missing: '. $missingIndex);
+        return new self('Invalid reposnse missing: '.$missingIndex);
+    }
+
+    /**
+     * @return UploadException
+     */
+    public static function emptyFile()
+    {
+        return new self('The content of the file you are about to upload is empty');
     }
 }
