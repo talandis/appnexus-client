@@ -29,23 +29,7 @@ class SegmentRepositoryTest extends TestCase
         $segment = new Segment();
         $segment->setName('Test segment');
 
-        // ID 5012
-        $responseBody = json_encode(
-            [
-                'response' => [
-                    'status' => 'OK',
-                    'segment' => [
-                        'id' => 5012,
-                    ],
-                ],
-            ]
-        );
-
-        $fakeResponse = $this->prophesize(Response::class);
-        $stream = $this->prophesize(Stream::class);
-        $stream->getContents()->willReturn($responseBody);
-        $stream->rewind()->willReturn(null)->shouldBeCalled();
-        $fakeResponse->getBody()->willReturn($stream->reveal());
+        $fakeResponse = $this->getFakeResponse($this->getSingleSegment());
 
         $payload = [
             'segment' => $segment->toArray(),
@@ -133,10 +117,57 @@ class SegmentRepositoryTest extends TestCase
                ->willReturn($fakeResponse)
                ->shouldBeCalled();
 
-        $repositoryResponse = $repository->remove('member_id',$id);
+        $repositoryResponse = $repository->remove('member_id', $id);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
 
     }
 
+    /**
+     * @test
+     */
+    public function find_one_by_id_will_return_a_segment()
+    {
+
+        $client = $this->prophesize(Auth::class);
+        $repository = new SegmentRepository($client->reveal());
+
+        $id = '5012';
+
+        $fakeResponse = $this->getFakeResponse($this->getSingleSegment());
+
+        $client->request('GET', Argument::containingString($id))
+               ->willReturn($fakeResponse)
+               ->shouldBeCalled();
+
+        $segment = $repository->findOneById('member_id', $id);
+
+        $this->assertEquals(5012, $segment->getId());
+
+    }
+
+    /**
+     * @test
+     */
+    public function find_all_will_return_an_array_of_segments()
+    {
+
+        $client = $this->prophesize(Auth::class);
+        $repository = new SegmentRepository($client->reveal());
+
+        $id = '5012';
+
+        $fakeResponse = $this->getFakeResponse($this->getMultipleSegments());
+
+        $client->request('GET', Argument::containingString('start_element=3'))
+               ->willReturn($fakeResponse)
+               ->shouldBeCalled();
+
+        $segments = $repository->findAll('member_id', 3, 3);
+
+        foreach ($segments as $segment) {
+            $this->assertInstanceOf(Segment::class, $segment);
+        }
+
+    }
 }
