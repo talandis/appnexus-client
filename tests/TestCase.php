@@ -110,6 +110,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
                     'status' => 'OK',
                     'segment' => [
                         "id" => 5012,
+                        "active" => true,
                     ],
                 ],
             ]
@@ -128,12 +129,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
                     'segments' => [
                         [
                             "id" => 123,
+                            "active" => true,
                         ],
                         [
                             "id" => 456,
+                            "active" => true,
                         ],
                         [
                             "id" => 789,
+                            "active" => true,
                         ],
                     ],
                 ],

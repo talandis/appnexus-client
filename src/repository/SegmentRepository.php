@@ -66,7 +66,6 @@ class SegmentRepository implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if ($repositoryResponse->isSuccessful()) {
-
             $stream = $response->getBody();
             $responseContent = json_decode($stream->getContents(), true);
             $stream->rewind();
