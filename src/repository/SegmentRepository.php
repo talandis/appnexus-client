@@ -2,6 +2,7 @@
 
 namespace Audiens\AppnexusClient\repository;
 
+use Audiens\AppnexusClient\CachableTrait;
 use Audiens\AppnexusClient\CacheableInterface;
 use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\exceptions\RepositoryException;
@@ -15,6 +16,8 @@ use GuzzleHttp\ClientInterface;
 class SegmentRepository implements CacheableInterface
 {
 
+    use CachableTrait;
+
     const BASE_URL = 'https://api.adnxs.com/segment/';
 
     /** @var Client */
@@ -26,8 +29,6 @@ class SegmentRepository implements CacheableInterface
     /** @var  Cache */
     protected $cache;
 
-    /** @var bool */
-    protected $cacheEnabled;
 
     const CACHE_NAMESPACE = 'appnexus_segment_repository_find_all';
 
@@ -203,23 +204,5 @@ class SegmentRepository implements CacheableInterface
 
         return $result;
 
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isCacheEnabled()
-    {
-        return $this->cacheEnabled;
-    }
-
-    public function disableCache()
-    {
-        $this->cacheEnabled = false;
-    }
-
-    public function enableCache()
-    {
-        $this->cacheEnabled = true;
     }
 }

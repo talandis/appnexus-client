@@ -14,7 +14,7 @@ class RepositoryException extends \Exception
     /**
      * @param $responseContent
      *
-     * @return RepositoryException
+     * @return self
      */
     public static function wrongFormat($responseContent)
     {
@@ -24,7 +24,7 @@ class RepositoryException extends \Exception
     /**
      * @param Segment $segment
      *
-     * @return RepositoryException
+     * @return self
      */
     public static function missingId(Segment $segment)
     {
@@ -34,7 +34,7 @@ class RepositoryException extends \Exception
     /**
      * @param RepositoryResponse $repositoryResponse
      *
-     * @return RepositoryException
+     * @return self
      */
     public static function failed(RepositoryResponse $repositoryResponse)
     {
@@ -44,7 +44,7 @@ class RepositoryException extends \Exception
     /**+
      * @param $missingIndex
      *
-     * @return RepositoryException
+     * @return self
      */
     public static function missingIndex($missingIndex)
     {

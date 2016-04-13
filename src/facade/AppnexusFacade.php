@@ -10,6 +10,7 @@ use Audiens\AppnexusClient\entity\UploadJobStatus;
 use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 use Audiens\AppnexusClient\repository\SegmentRepository;
+use Audiens\AppnexusClient\service\Report;
 use Audiens\AppnexusClient\service\UserUpload;
 use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
@@ -26,6 +27,12 @@ class AppnexusFacade implements CacheableInterface
 
     /** @var  SegmentRepository */
     private $segmentRepository;
+
+    /** @var UserUpload */
+    private $userUpload;
+
+    /** @var Report */
+    private $report;
 
     /**
      * AppnexusFacade constructor.
@@ -49,6 +56,7 @@ class AppnexusFacade implements CacheableInterface
 
         $this->segmentRepository = new SegmentRepository($auth, $cache);
         $this->userUpload = new UserUpload($auth, $cache);
+        $this->report = new Report($auth, $cache);
 
     }
 
@@ -152,6 +160,28 @@ class AppnexusFacade implements CacheableInterface
     public function getJobStatus(UploadTicket $uploadTicket)
     {
         return $this->userUpload->getJobStatus($uploadTicket);
+    }
+
+    /**
+     * @param array $reportFormat
+     *
+     * @return array
+     * @throws \Audiens\AppnexusClient\exceptions\RepositoryException
+     */
+    public function getReport($reportFormat = Report::REVENUE_REPORT)
+    {
+
+        $reportStatus = $this->report->getReportStatus($this->report->getReportTicket($reportFormat));
+
+        $maxSteps = 0;
+
+        while (!$reportStatus->isReady() && $maxSteps < 10) {
+            $reportStatus = $this->report->getReportStatus($reportStatus);
+            $maxSteps++;
+        }
+
+        return $this->report->getReport($reportStatus);
+
     }
 
     /**

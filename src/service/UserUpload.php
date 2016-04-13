@@ -3,10 +3,10 @@
 namespace Audiens\AppnexusClient\service;
 
 use Audiens\AppnexusClient\Auth;
+use Audiens\AppnexusClient\CachableTrait;
 use Audiens\AppnexusClient\CacheableInterface;
 use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\entity\UploadJobStatus;
-use Audiens\AppnexusClient\exceptions\RepositoryException;
 use Audiens\AppnexusClient\exceptions\UploadException;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 use Doctrine\Common\Cache\Cache;
@@ -18,6 +18,8 @@ use GuzzleHttp\ClientInterface;
  */
 class UserUpload implements CacheableInterface
 {
+
+    use CachableTrait;
 
     const BASE_URL = 'http://api.adnxs.com/batch-segment';
 
@@ -60,7 +62,6 @@ class UserUpload implements CacheableInterface
      *
      * @return UploadJobStatus
      * @throws UploadException
-     * @throws RepositoryException
      */
     public function upload($memberId, $fileAsString)
     {
@@ -90,7 +91,7 @@ class UserUpload implements CacheableInterface
      * @param $memberId
      *
      * @return UploadJobStatus
-     * @throws RepositoryException
+     * @throws UploadException
      */
     public function getUploadTicket($memberId)
     {
@@ -121,7 +122,7 @@ class UserUpload implements CacheableInterface
      * @param UploadTicket $uploadTicket
      *
      * @return UploadJobStatus
-     * @throws \Audiens\AppnexusClient\exceptions\RepositoryException
+     * @throws UploadException
      */
     public function getJobStatus(UploadTicket $uploadTicket)
     {
@@ -184,23 +185,5 @@ class UserUpload implements CacheableInterface
 
         return $uploadStatuses;
 
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isCacheEnabled()
-    {
-        return $this->cacheEnabled;
-    }
-
-    public function disableCache()
-    {
-        $this->cacheEnabled = false;
-    }
-
-    public function enableCache()
-    {
-        $this->cacheEnabled = true;
     }
 }

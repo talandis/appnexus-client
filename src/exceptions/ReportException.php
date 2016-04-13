@@ -5,9 +5,9 @@ namespace Audiens\AppnexusClient\exceptions;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 
 /**
- * Class UploadException
+ * Class ReportException
  */
-class UploadException extends \Exception
+class ReportException extends \Exception
 {
 
     /**
@@ -33,8 +33,8 @@ class UploadException extends \Exception
     /**
      * @return self
      */
-    public static function emptyFile()
+    public static function validation($message)
     {
-        return new self('The content of the file you are about to upload is empty');
+        return new self($message);
     }
 }

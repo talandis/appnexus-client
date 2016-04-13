@@ -13,7 +13,7 @@ class AuthException extends \Exception
     /**
      * @param $reason
      *
-     * @return AuthException
+     * @return self
      */
     public static function authFailed($reason)
     {

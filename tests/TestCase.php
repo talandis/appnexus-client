@@ -38,6 +38,15 @@ class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * @return string
      */
+    protected function getReportResponse()
+    {
+        return "day,seller_member,publisher_id,publisher_name,publisher_code,buyer_member_id,buyer_member_name,imps,imps_delivered,seller_revenue\n
+                1,1,1,1,1,1,1,1,1,1";
+    }
+
+    /**
+     * @return string
+     */
     protected function getCompletedJob()
     {
         return json_encode(
@@ -72,6 +81,52 @@ class TestCase extends \PHPUnit_Framework_TestCase
                             "last_modified" => '2016-04-08 08:41:19',
                             "upload_url" => null,
                         ],
+                    ],
+                ],
+            ]
+        );
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getReportTicket()
+    {
+        return json_encode(
+            [
+                'response' => [
+                    'status' => 'OK',
+                    'report_id' => '3e1f487cc75298a30032998c4a4b8d6c',
+                    'existing' => null,
+                    'cached' => 1,
+                ],
+            ]
+        );
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getReportStatus()
+    {
+        return json_encode(
+            [
+                'response' => [
+                    "status" => "OK",
+                    "execution_status" => 'ready',
+                    "report" => [
+                        "name" => "Weekly SSP Revenue Report",
+                        "created_on" => "2016-04-12 09:06:57",
+                        "cache_hit" => 1,
+                        "fact_cache_hit" => 1,
+                        "fact_cache_error" => null,
+                        "json_request" => "{}",
+                        "header_info" => "Report type: seller_platform_billing",
+                        "row_count" => null,
+                        "report_size" => 131,
+                        "url" => "report-download?id=4b22a2c9a361f6d8a8feb99c10745a66",
                     ],
                 ],
             ]

@@ -49,23 +49,5 @@ class UserUploadTest extends FunctionalTestCase
 
     }
 
-    /**
-     * @param bool|true $cacheToken
-     *
-     * @return Auth
-     */
-    protected function getAuth($cacheToken = true)
-    {
-
-        $cache = $cacheToken ? new FilesystemCache('build') : null;
-        $client = new Client();
-
-        $authStrategy = new AdnxStrategy(new Client(), $cache);
-
-        $authClient = new Auth(getenv('USERNAME'), getenv('PASSWORD'), $client, $authStrategy);
-
-        return $authClient;
-
-    }
 
 }

@@ -2,13 +2,8 @@
 
 namespace Test\functional;
 
-use Audiens\AppnexusClient\Auth;
-use Audiens\AppnexusClient\authentication\AdnxStrategy;
 use Audiens\AppnexusClient\entity\Segment;
-use Audiens\AppnexusClient\facade\AppnexusFacade;
 use Audiens\AppnexusClient\repository\SegmentRepository;
-use Doctrine\Common\Cache\FilesystemCache;
-use GuzzleHttp\Client;
 use Prophecy\Argument;
 use Test\FunctionalTestCase;
 
@@ -261,39 +256,6 @@ class SegmentRepositoryTest extends FunctionalTestCase
 
         $this->assertEquals(12.11, $segment->getPrice());
 
-
-    }
-
-
-    /**
-     * @param bool|true $cacheToken
-     *
-     * @return Auth
-     */
-    protected function getAuth($cacheToken = true)
-    {
-
-        $cache = $cacheToken ? new FilesystemCache('build') : null;
-        $client = new Client();
-
-        $authStrategy = new AdnxStrategy(new Client(), $cache);
-
-        $authClient = new Auth(getenv('USERNAME'), getenv('PASSWORD'), $client, $authStrategy);
-
-        return $authClient;
-
-    }
-
-
-    /**
-     * @return AppnexusFacade
-     */
-    protected function getFacade()
-    {
-
-        $facade = new AppnexusFacade(getenv('USERNAME'), getenv('PASSWORD'), getenv('MEMBER_ID'));
-
-        return $facade;
 
     }
 
