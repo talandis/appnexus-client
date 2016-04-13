@@ -2,7 +2,8 @@
 
 echo "### Appnexus client: Tidyng up the code ###"
 
-./bin/phpcs -p --standard=PSR2 --warning-severity=6 --colors src/
+
+./bin/phpcs -p --standard=PSR2 --warning-severity=6 --colors src/ && \
 ./bin/phpcbf -p --standard=PSR2 --warning-severity=6 src/
 if [ $? != 0 ]
 	then
