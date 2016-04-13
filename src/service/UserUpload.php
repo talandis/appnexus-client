@@ -23,6 +23,8 @@ class UserUpload implements CacheableInterface
 
     const BASE_URL = 'http://api.adnxs.com/batch-segment';
 
+    const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/batch-segment';
+
     /** @var  \SplQueue */
     protected $userSegments;
 
@@ -35,8 +37,8 @@ class UserUpload implements CacheableInterface
     /** @var  Cache */
     protected $cache;
 
-    /** @var bool */
-    protected $cacheEnabled;
+    /** @var  string */
+    protected $baseUrl;
 
     const CACHE_NAMESPACE = 'appnexus_segment_user_upload';
 
@@ -53,8 +55,25 @@ class UserUpload implements CacheableInterface
         $this->client = $client;
         $this->cache = $cache;
         $this->cacheEnabled = $cache instanceof Cache;
-
+        $this->baseUrl = self::BASE_URL;
     }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
+     * @param string $baseUrl
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
+    }
+
 
     /**
      * @param $memberId
@@ -96,7 +115,7 @@ class UserUpload implements CacheableInterface
     public function getUploadTicket($memberId)
     {
 
-        $compiledUrl = self::BASE_URL.'?member_id='.$memberId;
+        $compiledUrl = $this->baseUrl.'?member_id='.$memberId;
 
         $response = $this->client->request('POST', $compiledUrl);
 
@@ -127,7 +146,7 @@ class UserUpload implements CacheableInterface
     public function getJobStatus(UploadTicket $uploadTicket)
     {
 
-        $compiledUrl = self::BASE_URL."?member_id={$uploadTicket->getMemberId()}&job_id={$uploadTicket->getJobId()}";
+        $compiledUrl = $this->baseUrl."?member_id={$uploadTicket->getMemberId()}&job_id={$uploadTicket->getJobId()}";
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -149,7 +168,6 @@ class UserUpload implements CacheableInterface
 
     }
 
-
     /**
      * @param     $memberId
      * @param int $start
@@ -161,7 +179,7 @@ class UserUpload implements CacheableInterface
     public function getUploadHistory($memberId, $start = 0, $maxResults = 100)
     {
 
-        $compiledUrl = self::BASE_URL."?member_id=$memberId&start_element=$start&num_elements=$maxResults";
+        $compiledUrl = $this->baseUrl."?member_id=$memberId&start_element=$start&num_elements=$maxResults";
 
         $response = $this->client->request('GET', $compiledUrl);
 

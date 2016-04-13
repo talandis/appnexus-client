@@ -20,6 +20,8 @@ class SegmentRepository implements CacheableInterface
 
     const BASE_URL = 'https://api.adnxs.com/segment/';
 
+    const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/segment/';
+
     /** @var Client */
     protected $client;
 
@@ -29,6 +31,8 @@ class SegmentRepository implements CacheableInterface
     /** @var  Cache */
     protected $cache;
 
+    /** @var  string */
+    protected $baseUrl;
 
     const CACHE_NAMESPACE = 'appnexus_segment_repository_find_all';
 
@@ -45,7 +49,25 @@ class SegmentRepository implements CacheableInterface
         $this->client = $client;
         $this->cache = $cache;
         $this->cacheEnabled = $cache instanceof Cache;
+        $this->baseUrl = self::BASE_URL;
     }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
+     * @param string $baseUrl
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
+    }
+
 
     /**
      * @param Segment $segment
@@ -56,7 +78,7 @@ class SegmentRepository implements CacheableInterface
     public function add(Segment $segment)
     {
 
-        $compiledUrl = self::BASE_URL.$segment->getMemberId();
+        $compiledUrl = $this->baseUrl.$segment->getMemberId();
 
         $payload = [
             'segment' => $segment->toArray(),
@@ -91,7 +113,7 @@ class SegmentRepository implements CacheableInterface
     public function remove($memberId, $id)
     {
 
-        $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
+        $compiledUrl = $this->baseUrl.$memberId.'/'.$id;
 
         $response = $this->client->request('DELETE', $compiledUrl);
 
@@ -114,7 +136,7 @@ class SegmentRepository implements CacheableInterface
             throw RepositoryException::missingId($segment);
         }
 
-        $compiledUrl = self::BASE_URL.$segment->getMemberId().'/'.$segment->getId();
+        $compiledUrl = $this->baseUrl.$segment->getMemberId().'/'.$segment->getId();
 
         $payload = [
             'segment' => $segment->toArray(),
@@ -137,7 +159,7 @@ class SegmentRepository implements CacheableInterface
     public function findOneById($memberId, $id)
     {
 
-        $compiledUrl = self::BASE_URL.$memberId.'/'.$id;
+        $compiledUrl = $this->baseUrl.$memberId.'/'.$id;
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -174,7 +196,7 @@ class SegmentRepository implements CacheableInterface
             }
         }
 
-        $compiledUrl = self::BASE_URL.$memberId."?start_element=$start&num_elements=$maxResults";
+        $compiledUrl = $this->baseUrl.$memberId."?start_element=$start&num_elements=$maxResults";
 
         $response = $this->client->request('GET', $compiledUrl);
 

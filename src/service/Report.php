@@ -24,6 +24,10 @@ class Report implements CacheableInterface
     const BASE_URL          = 'http://api.adnxs.com/report';
     const BASE_URL_DOWNLOAD = 'http://api.adnxs.com/';
 
+    const SANDBOX_BASE_URL          = 'http://api-test.adnxs.com/report';
+    const SANDBOX_BASE_URL_DOWNLOAD = 'http://api-test.adnxs.com/';
+
+
     /** @var  \SplQueue */
     protected $userSegments;
 
@@ -63,6 +67,12 @@ class Report implements CacheableInterface
             ],
     ];
 
+    /** @var string */
+    protected $baseUrl;
+
+    /** @var  string */
+    protected $baseUrlDownload;
+
     /**
      * SegmentRepository constructor.
      *
@@ -75,7 +85,43 @@ class Report implements CacheableInterface
         $this->cache = $cache;
         $this->cacheEnabled = $cache instanceof Cache;
 
+        $this->baseUrl = self::BASE_URL;
+        $this->baseUrlDownload = self::BASE_URL_DOWNLOAD;
+
     }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+
+    /**
+     * @param string $baseUrl
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseUrlDownload()
+    {
+        return $this->baseUrlDownload;
+    }
+
+    /**
+     * @param string $baseUrlDownload
+     */
+    public function setBaseUrlDownload($baseUrlDownload)
+    {
+        $this->baseUrlDownload = $baseUrlDownload;
+    }
+
 
     /**
      * @param array $reportFormat
@@ -86,7 +132,7 @@ class Report implements CacheableInterface
     public function getReportTicket($reportFormat = self::REVENUE_REPORT)
     {
 
-        $compiledUrl = self::BASE_URL;
+        $compiledUrl = $this->baseUrl;
 
         $response = $this->client->request('POST', $compiledUrl, ['body' => json_encode($reportFormat)]);
 
@@ -118,7 +164,7 @@ class Report implements CacheableInterface
     public function getReportStatus(ReportTicket $reportTicket)
     {
 
-        $compiledUrl = self::BASE_URL.'?id='.$reportTicket->getReportId();
+        $compiledUrl = $this->baseUrl.'?id='.$reportTicket->getReportId();
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -156,7 +202,7 @@ class Report implements CacheableInterface
     public function getReport(ReportStatus $reportStatus)
     {
         if (!$reportStatus->isReady()) {
-            throw ReportException::validation('report status not readi');
+            throw ReportException::validation('report status not ready');
         }
 
         if (!$reportStatus->getUrl()) {
@@ -171,7 +217,7 @@ class Report implements CacheableInterface
             }
         }
 
-        $compiledUrl = self::BASE_URL_DOWNLOAD.$reportStatus->getUrl();
+        $compiledUrl = $this->baseUrlDownload.$reportStatus->getUrl();
 
         $response = $this->client->request('GET', $compiledUrl);
 

@@ -2,8 +2,9 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-use GeneratedHydrator\Configuration;
 use Zend\Hydrator\ObjectProperty;
+use Zend\Hydrator\Reflection;
+use Zend\Stdlib\Hydrator;
 
 /**
  * Class HydratableTrait
@@ -37,12 +38,8 @@ trait HydratableTrait
      */
     private static function getHydrator()
     {
-
-        $config = new Configuration(self::class);
-        $hydratorClass = $config->createFactory()->getHydratorClass();
-        $hydrator = new $hydratorClass();
+        $hydrator = new Reflection();
 
         return $hydrator;
-
     }
 }

@@ -1,6 +1,6 @@
 # Audiens/appnexus-client
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Audiens/appnexus-client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Audiens/appnexus-client/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/Audiens/appnexus-client/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Audiens/appnexus-client/build-status/master)
+[![Build Status](https://travis-ci.org/Audiens/appnexus-client.svg?branch=master)](https://travis-ci.org/Audiens/appnexus-client)
 [![Code Climate](https://codeclimate.com/github/Audiens/appnexus-client/badges/gpa.svg)](https://codeclimate.com/github/Audiens/appnexus-client)
 [![Coverage Status](https://coveralls.io/repos/github/Audiens/appnexus-client/badge.svg?branch=master)](https://coveralls.io/github/Audiens/appnexus-client?branch=master)
 

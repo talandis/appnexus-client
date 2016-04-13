@@ -22,9 +22,9 @@ class UserUploadTest extends FunctionalTestCase
     public function get_ticket_will_return_an_object()
     {
 
-        $repository = new UserUpload($this->getAuth());
+        $service = $this->getUserUpload();
 
-        $job = $repository->getUploadTicket(getenv('MEMBER_ID'));
+        $job = $service->getUploadTicket(getenv('MEMBER_ID'));
 
         $this->assertNotNull($job->getId());
         $this->assertNotNull($job->getJobId());
@@ -38,10 +38,10 @@ class UserUploadTest extends FunctionalTestCase
     public function upload_will_return_a_job_status()
     {
 
-        $repository = new UserUpload($this->getAuth());
+        $service = $this->getUserUpload();
 
         $fileAsString = "5727816213491965430,78610639;'it.gender.male';7776000;1458191702;0;0\n";
-        $jobStatus = $repository->upload(getenv('MEMBER_ID'), $fileAsString);
+        $jobStatus = $service->upload(getenv('MEMBER_ID'), $fileAsString);
 
         $this->assertNotNull($jobStatus->getId());
         $this->assertNotNull($jobStatus->getPhase());
