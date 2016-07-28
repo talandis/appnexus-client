@@ -28,5 +28,22 @@ class FacadeTest extends FunctionalTestCase
         $this->assertEquals($expectedHeaders, $report[0]);
     }
 
+    /**
+     * @test
+     */
+    public function get_report_will_return_a_report_with_the_segment_load()
+    {
+
+        $facade = $this->getFacade();
+
+        $report = $facade->getReport(Report::SEGMENT_LOAD_REPORT_DAILY_VC);
+
+        $expectedHeaders = Report::SEGMENT_LOAD_REPORT_DAILY_VC;
+        $expectedHeaders = $expectedHeaders['report']['columns'];
+
+        $this->assertEquals($expectedHeaders, $report[0]);
+    }
+
+
 
 }

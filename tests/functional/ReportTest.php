@@ -18,7 +18,6 @@ class ReportTest extends FunctionalTestCase
     public function get_ticket_will_return_an_object()
     {
 
-        $this->markTestSkipped('sandbox endpoint bug');
 
         $reportService = $this->getReport();
         $reportTicket = $reportService->getReportTicket();

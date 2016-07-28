@@ -21,10 +21,10 @@ class Report implements CacheableInterface
 
     use CachableTrait;
 
-    const BASE_URL          = 'http://api.adnxs.com/report';
+    const BASE_URL = 'http://api.adnxs.com/report';
     const BASE_URL_DOWNLOAD = 'http://api.adnxs.com/';
 
-    const SANDBOX_BASE_URL          = 'http://api-test.adnxs.com/report';
+    const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/report';
     const SANDBOX_BASE_URL_DOWNLOAD = 'http://api-test.adnxs.com/';
 
 
@@ -67,6 +67,53 @@ class Report implements CacheableInterface
             ],
     ];
 
+
+    const SEGMENT_LOAD_REPORT_CUMULATIVE_VC = [
+        'report' =>
+            [
+                'report_type' => 'segment_load',
+                'timezone' => 'PST',
+                'report_interval' => 'month_to_date',
+                'name' => 'Cumulative VC report',
+                'columns' =>
+                    [
+                        "avg_daily_uniques",
+                        "month",
+                    ],
+
+                "groups" => [
+                    "month",
+
+                ],
+                "orders" => [
+                    "avg_daily_uniques"
+                ],
+            ],
+    ];
+
+    const SEGMENT_LOAD_REPORT_DAILY_VC = [
+        'report' =>
+            [
+                'report_type' => 'segment_load',
+                'timezone' => 'PST',
+                'report_interval' => 'today',
+                'name' => 'Cumulative VC report',
+                'columns' =>
+                    [
+                        "daily_uniques",
+                        "day",
+                    ],
+
+                "groups" => [
+                    "day",
+
+                ],
+                "orders" => [
+                    "daily_uniques"
+                ],
+            ],
+    ];
+
     /** @var string */
     protected $baseUrl;
 
@@ -77,7 +124,7 @@ class Report implements CacheableInterface
      * SegmentRepository constructor.
      *
      * @param ClientInterface $client
-     * @param Cache|null      $cache
+     * @param Cache|null $cache
      */
     public function __construct(ClientInterface $client, Cache $cache = null)
     {
@@ -164,7 +211,7 @@ class Report implements CacheableInterface
     public function getReportStatus(ReportTicket $reportTicket)
     {
 
-        $compiledUrl = $this->baseUrl.'?id='.$reportTicket->getReportId();
+        $compiledUrl = $this->baseUrl . '?id=' . $reportTicket->getReportId();
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -209,7 +256,7 @@ class Report implements CacheableInterface
             throw ReportException::validation('missing url in the report status');
         }
 
-        $cacheKey = self::CACHE_NAMESPACE.sha1($reportStatus->getUrl());
+        $cacheKey = self::CACHE_NAMESPACE . sha1($reportStatus->getUrl());
 
         if ($this->isCacheEnabled()) {
             if ($this->cache->contains($cacheKey)) {
@@ -217,7 +264,7 @@ class Report implements CacheableInterface
             }
         }
 
-        $compiledUrl = $this->baseUrlDownload.$reportStatus->getUrl();
+        $compiledUrl = $this->baseUrlDownload . $reportStatus->getUrl();
 
         $response = $this->client->request('GET', $compiledUrl);
 

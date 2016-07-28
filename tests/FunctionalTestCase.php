@@ -3,6 +3,7 @@
 namespace Test;
 
 use Audiens\AppnexusClient\Auth;
+use Audiens\AppnexusClient\authentication\AdnxStrategy;
 use Audiens\AppnexusClient\authentication\SandboxStrategy;
 use Audiens\AppnexusClient\facade\AppnexusFacade;
 use Audiens\AppnexusClient\repository\SegmentRepository;
