@@ -101,7 +101,6 @@ class SegmentRepository implements CacheableInterface
         }
 
         return $repositoryResponse;
-
     }
 
     /**
@@ -120,7 +119,6 @@ class SegmentRepository implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         return $repositoryResponse;
-
     }
 
     /**
@@ -147,7 +145,6 @@ class SegmentRepository implements CacheableInterface
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         return $repositoryResponse;
-
     }
 
     /**
@@ -174,7 +171,6 @@ class SegmentRepository implements CacheableInterface
         $stream->rewind();
 
         return Segment::fromArray($responseContent['response']['segment']);
-
     }
 
     /**
@@ -225,6 +221,5 @@ class SegmentRepository implements CacheableInterface
         }
 
         return $result;
-
     }
 }

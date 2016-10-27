@@ -112,7 +112,6 @@ class RepositoryResponse
         $self->setError($error);
 
         return $self;
-
     }
 
     /**
@@ -126,6 +125,5 @@ class RepositoryResponse
         $response->getBody()->rewind();
 
         return $responseContent;
-
     }
 }

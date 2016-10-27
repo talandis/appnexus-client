@@ -54,7 +54,7 @@ class Report implements CacheableInterface
                 'columns' =>
                     [
                         0 => 'day',
-                        1 => 'seller_member',
+                        1 => 'seller_member_id',
                         2 => 'publisher_id',
                         3 => 'publisher_name',
                         4 => 'publisher_code',
@@ -85,9 +85,9 @@ class Report implements CacheableInterface
                     "month",
 
                 ],
-                "orders" => [
+                    "orders" => [
                     "avg_daily_uniques"
-                ],
+                    ],
             ],
     ];
 
@@ -108,9 +108,9 @@ class Report implements CacheableInterface
                     "day",
 
                 ],
-                "orders" => [
+                    "orders" => [
                     "daily_uniques"
-                ],
+                    ],
             ],
     ];
 
@@ -134,7 +134,6 @@ class Report implements CacheableInterface
 
         $this->baseUrl = self::BASE_URL;
         $this->baseUrlDownload = self::BASE_URL_DOWNLOAD;
-
     }
 
     /**
@@ -198,7 +197,6 @@ class Report implements CacheableInterface
         );
 
         return $reportTicket;
-
     }
 
 
@@ -236,7 +234,6 @@ class Report implements CacheableInterface
         $reportStatus->setCached($reportTicket->getCached());
 
         return $reportStatus;
-
     }
 
 
@@ -281,6 +278,5 @@ class Report implements CacheableInterface
         }
 
         return $result;
-
     }
 }

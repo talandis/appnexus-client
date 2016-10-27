@@ -103,7 +103,6 @@ class UserUpload implements CacheableInterface
         }
 
         return $this->getJobStatus($job);
-
     }
 
     /**
@@ -134,7 +133,6 @@ class UserUpload implements CacheableInterface
         );
 
         return $uploadJob;
-
     }
 
     /**
@@ -165,7 +163,6 @@ class UserUpload implements CacheableInterface
         );
 
         return $uploadJobStatus;
-
     }
 
     /**
@@ -202,6 +199,5 @@ class UserUpload implements CacheableInterface
         }
 
         return $uploadStatuses;
-
     }
 }

@@ -1,13 +1,14 @@
 #!/bin/sh
 
-echo "### Appnexus client: Tidyng up the code ###"
+echo "### Appnexus client: Code style checker ###"
 
-
-./bin/phpcs -p --standard=PSR2 --warning-severity=6 --colors src/ && \
-./bin/phpcbf -p --standard=PSR2 --warning-severity=6 src/
+./bin/phpcs -p --standard=PSR2 --warning-severity=6 --colors src/
 if [ $? != 0 ]
 	then
-		echo "There are some code style issue. Fix them before submitting your code."
+	    echo "There are some code style issue."
+	    echo "###Tidyng up the code ###"
+	    ./bin/phpcbf -p --standard=PSR2 --warning-severity=6 src/
+	    echo "DONE, retry the code should be fine."
 		exit 1
 	fi
 

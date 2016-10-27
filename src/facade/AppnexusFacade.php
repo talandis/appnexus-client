@@ -57,7 +57,6 @@ class AppnexusFacade implements CacheableInterface
         $this->segmentRepository = new SegmentRepository($auth, $cache);
         $this->userUpload = new UserUpload($auth, $cache);
         $this->report = new Report($auth, $cache);
-
     }
 
     /**
@@ -70,7 +69,6 @@ class AppnexusFacade implements CacheableInterface
     {
 
         return $this->segmentRepository->add($segment);
-
     }
 
     /**
@@ -82,7 +80,6 @@ class AppnexusFacade implements CacheableInterface
     {
 
         return $this->segmentRepository->remove($this->memberId, $id);
-
     }
 
     /**
@@ -181,7 +178,6 @@ class AppnexusFacade implements CacheableInterface
         }
 
         return $this->report->getReport($reportStatus);
-
     }
 
     /**

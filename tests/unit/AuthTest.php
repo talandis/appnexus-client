@@ -4,7 +4,6 @@ namespace Test\unit;
 
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\authentication\AuthStrategyInterface;
-use Doctrine\Common\Cache\CacheProvider;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
@@ -43,15 +42,10 @@ class AuthTest extends TestCase
             ],
         ];
 
-        $client = $this->getMock(ClientInterface::class);
+        $client = $this->prophesize(ClientInterface::class);
+        $client->request('POST', 'random_url', $expectedRequestOptions)->willReturn($dummyResponse->reveal())->shouldBeCalled();
 
-        $client
-            ->expects($this->at(0))
-            ->method('request')
-            ->with('POST', 'random_url', $expectedRequestOptions)
-            ->willReturn($dummyResponse->reveal());
-
-        $auth = new Auth($username, $password, $client, $authStrategy->reveal());
+        $auth = new Auth($username, $password, $client->reveal(), $authStrategy->reveal());
         $auth->request('POST', 'random_url', []);
 
 

@@ -52,7 +52,6 @@ class Auth implements ClientInterface
 
         $this->client = $clientInterface;
         $this->authStrategy = $authStrategy;
-
     }
 
     /**
@@ -89,7 +88,6 @@ class Auth implements ClientInterface
         $options = array_merge($options, $optionForToken);
 
         return $this->client->request($method, $uri, $options);
-
     }
 
 
@@ -139,6 +137,5 @@ class Auth implements ClientInterface
         $response->getBody()->rewind();
 
         return isset($content['response']['error_id']) && $content['response']['error_id'] == 'NOAUTH';
-
     }
 }
