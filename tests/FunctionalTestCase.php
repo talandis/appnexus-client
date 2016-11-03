@@ -3,9 +3,9 @@
 namespace Test;
 
 use Audiens\AppnexusClient\Auth;
-use Audiens\AppnexusClient\authentication\AdnxStrategy;
 use Audiens\AppnexusClient\authentication\SandboxStrategy;
 use Audiens\AppnexusClient\facade\AppnexusFacade;
+use Audiens\AppnexusClient\repository\CategoryRepository;
 use Audiens\AppnexusClient\repository\SegmentRepository;
 use Audiens\AppnexusClient\service\Report;
 use Audiens\AppnexusClient\service\UserUpload;
@@ -93,6 +93,23 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
 
         return $segmentRepository;
     }
+
+    /**
+     * @param bool|true $cacheToken
+     * @return CategoryRepository
+     */
+    protected function getCategoryRepository($cacheToken = true)
+    {
+
+        $authClient = $this->getAuth($cacheToken);
+
+        $categoryRepository = new CategoryRepository($authClient);
+        $categoryRepository->setBaseUrl(CategoryRepository::SANDBOX_BASE_URL);
+
+        return $categoryRepository;
+    }
+
+
 
 
     /**
