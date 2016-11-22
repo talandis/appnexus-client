@@ -139,10 +139,7 @@ class SegmentBillingRepositoryTest extends TestCase
 
         $client = $this->prophesize(Auth::class);
         $repository = new SegmentBillingRepository($client->reveal());
-
-        $id = '5012';
-
-        $fakeResponse = $this->getFakeResponse($this->getMultipleSegments());
+        $fakeResponse = $this->getFakeResponse($this->getMultipleBillingSegments());
 
         $client->request('GET', Argument::containingString('start_element=3'))
                ->willReturn($fakeResponse)
@@ -150,8 +147,9 @@ class SegmentBillingRepositoryTest extends TestCase
 
         $segments = $repository->findAll('member_id', 3, 3);
 
+        $this->assertNotEmpty($segments);
         foreach ($segments as $segment) {
-            $this->assertInstanceOf(Segment::class, $segment);
+            $this->assertInstanceOf(SegmentBilling::class, $segment);
         }
 
     }
