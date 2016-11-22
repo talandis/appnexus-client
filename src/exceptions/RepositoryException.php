@@ -3,6 +3,7 @@
 namespace Audiens\AppnexusClient\exceptions;
 
 use Audiens\AppnexusClient\entity\Segment;
+use Audiens\AppnexusClient\entity\SegmentBilling;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 
 /**
@@ -26,9 +27,19 @@ class RepositoryException extends \Exception
      *
      * @return self
      */
-    public static function missingId(Segment $segment)
+    public static function missingId($segment)
     {
         return new self('Missing segment id for '.serialize($segment->getCode()));
+    }
+
+    /**
+     * @param SegmentBilling $segment
+     *
+     * @return self
+     */
+    public static function missingSegmentBillingId($segment)
+    {
+        return new self('Missing segment billing id for '.serialize($segment->getId()));
     }
 
     /**
@@ -39,6 +50,16 @@ class RepositoryException extends \Exception
     public static function failed(RepositoryResponse $repositoryResponse)
     {
         return new self('Failed call: '.$repositoryResponse->getError()->getError());
+    }
+
+    /**
+     * @param string $reason
+     *
+     * @return self
+     */
+    public static function genericFailed($reason)
+    {
+        return new self($reason);
     }
 
     /**+

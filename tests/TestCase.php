@@ -239,6 +239,75 @@ class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * @return string
      */
+    protected function getSingleBillingSegment()
+    {
+        return json_encode(
+            [
+                'response' => [
+                    'status' => 'OK',
+                    "segment-billing-category" =>
+                        [
+                            0 => [
+                                "id" => 123,
+                                "segment_id" => 123,
+                                "data_provider_id" => 1,
+                                "data_category_id" => 1001,
+                                "active" => true,
+                                "member_id" => 'member_id',
+                                "is_public" => true
+                            ]
+                        ]
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
+    protected function getMultipleBillingSegments()
+    {
+        return json_encode(
+            [
+                'response' => [
+                    'status' => 'OK',
+                    'segment-billing-categories' => [
+                        [
+                            "id" => 123,
+                            "segment_id" => 123,
+                            "data_provider_id" => 1,
+                            "data_category_id" => 1001,
+                            "active" => true,
+                            "member_id" => 'member_id',
+                            "is_public" => true
+                        ],
+                        [
+                            "id" => 456,
+                            "segment_id" => 456,
+                            "data_provider_id" => 1,
+                            "data_category_id" => 1001,
+                            "active" => true,
+                            "member_id" => 'member_id',
+                            "is_public" => true
+                        ],
+                        [
+                            "id" => 789,
+                            "segment_id" => 789,
+                            "data_provider_id" => 1,
+                            "data_category_id" => 1001,
+                            "active" => true,
+                            "member_id" => 'member_id',
+                            "is_public" => true
+                        ]
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @return string
+     */
     protected function getFailedResponse()
     {
         return json_encode(

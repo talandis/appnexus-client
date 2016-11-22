@@ -3,9 +3,11 @@
 namespace Test;
 
 use Audiens\AppnexusClient\Auth;
+use Audiens\AppnexusClient\authentication\AdnxStrategy;
 use Audiens\AppnexusClient\authentication\SandboxStrategy;
 use Audiens\AppnexusClient\facade\AppnexusFacade;
 use Audiens\AppnexusClient\repository\CategoryRepository;
+use Audiens\AppnexusClient\repository\SegmentBillingRepository;
 use Audiens\AppnexusClient\repository\SegmentRepository;
 use Audiens\AppnexusClient\service\Report;
 use Audiens\AppnexusClient\service\UserUpload;
@@ -24,6 +26,8 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         'USERNAME',
         'PASSWORD',
         'MEMBER_ID',
+        'DATA_PROVIDER_ID',
+        'DATA_CATEGORY_ID'
     ];
 
     protected function setUp()
@@ -73,9 +77,26 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
 
         $authStrategy = new SandboxStrategy(new Client(), $cache);
 
+
         $authClient = new Auth(getenv('USERNAME'), getenv('PASSWORD'), $client, $authStrategy);
 
         return $authClient;
+    }
+
+    /**
+     * @param bool|true $cacheToken
+     *
+     * @return SegmentBillingRepository
+     */
+    protected function getSegmentBillingRepository($cacheToken = true)
+    {
+
+        $authClient = $this->getAuth($cacheToken);
+
+        $segmentBillingRepository = new SegmentBillingRepository($authClient);
+        $segmentBillingRepository->setBaseUrl(SegmentBillingRepository::SANDBOX_BASE_URL);
+
+        return $segmentBillingRepository;
     }
 
     /**

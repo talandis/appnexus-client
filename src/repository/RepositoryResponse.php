@@ -101,6 +101,8 @@ class RepositoryResponse
 
         $responseArray = json_decode($responseContent, true);
 
+
+
         if (isset($responseArray['response']['status'])) {
             $self->setSuccessful($responseArray['response']['status'] == self::STATUS_SUCCESS);
         }
