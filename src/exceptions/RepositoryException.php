@@ -23,6 +23,14 @@ class RepositoryException extends \Exception
     }
 
     /**
+     * @return RepositoryException
+     */
+    public static function missingSegmentBillingContent()
+    {
+        return new self('Response returned an empty segment-billing-category');
+    }
+
+    /**
      * @param Segment $segment
      *
      * @return self

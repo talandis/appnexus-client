@@ -94,6 +94,9 @@ class SegmentBillingRepository implements CacheableInterface
 
             $stream->rewind();
 
+            if (count($responseContent['response']['segment-billing-category']) == 0) {
+                throw RepositoryException::missingSegmentBillingContent();
+            }
 
             if (!(isset($responseContent['response']['segment-billing-category'][0]['id']))) {
                 throw RepositoryException::wrongFormat(serialize($responseContent));

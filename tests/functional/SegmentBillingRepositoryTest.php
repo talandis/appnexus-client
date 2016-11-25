@@ -187,7 +187,7 @@ class SegmentBillingRepositoryTest extends FunctionalTestCase
         $segmentBilling->setActive(true);
         $segmentBilling->setDataCategoryId(getenv('DATA_CATEGORY_ID'));
         $segmentBilling->setDataProviderId(getenv('DATA_PROVIDER_ID'));
-        $segmentBilling->setSegmentId(5049472);
+        $segmentBilling->setSegmentId($segment->getId());
         $segmentBilling->setIsPublic(true);
 
         $repositoryResponse = $repository->add($segmentBilling);
