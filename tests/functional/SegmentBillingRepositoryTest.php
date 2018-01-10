@@ -17,6 +17,8 @@ class SegmentBillingRepositoryTest extends FunctionalTestCase
      */
     public function add_will_create_a_new_segment_billing__and_return_a_repository_response()
     {
+        $this->markTestSkipped('Please insert a valid DATA_PROVIDER_ID');
+
         $repositorySegment = $this->getSegmentRepository();
 
         $segment = new Segment();
@@ -54,6 +56,8 @@ class SegmentBillingRepositoryTest extends FunctionalTestCase
      */
     public function find_one_by_id_will_retrive_a_newly_created_billing_segment()
     {
+        $this->markTestSkipped('Please insert a valid DATA_PROVIDER_ID');
+
         $repositorySegment = $this->getSegmentRepository();
 
         $segment = new Segment();
@@ -116,6 +120,8 @@ class SegmentBillingRepositoryTest extends FunctionalTestCase
      */
     public function update_will_edit_an_existing_segment()
     {
+        $this->markTestSkipped('Please insert a valid DATA_PROVIDER_ID');
+
         $repositorySegment = $this->getSegmentRepository();
 
         $segment = new Segment();
@@ -167,6 +173,8 @@ class SegmentBillingRepositoryTest extends FunctionalTestCase
      */
     public function delete_will_remove_a_segment()
     {
+        $this->markTestSkipped('Please insert a valid DATA_PROVIDER_ID');
+        
         $repositorySegment = $this->getSegmentRepository();
 
         $segment = new Segment();

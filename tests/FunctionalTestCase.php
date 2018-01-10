@@ -3,10 +3,10 @@
 namespace Test;
 
 use Audiens\AppnexusClient\Auth;
-use Audiens\AppnexusClient\authentication\AdnxStrategy;
 use Audiens\AppnexusClient\authentication\SandboxStrategy;
 use Audiens\AppnexusClient\facade\AppnexusFacade;
 use Audiens\AppnexusClient\repository\CategoryRepository;
+use Audiens\AppnexusClient\repository\MemberDataSharingRepository;
 use Audiens\AppnexusClient\repository\SegmentBillingRepository;
 use Audiens\AppnexusClient\repository\SegmentRepository;
 use Audiens\AppnexusClient\service\Report;
@@ -14,7 +14,7 @@ use Audiens\AppnexusClient\service\UserUpload;
 use Doctrine\Common\Cache\FilesystemCache;
 use Dotenv\Dotenv;
 use GuzzleHttp\Client;
-use Prophecy\Argument;
+use Test\functional\MemberDataSharingRepositoryResponse;
 
 /**
  * Class SegmentRepositoryFunctionTest
@@ -113,6 +113,22 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         $segmentRepository->setBaseUrl(SegmentRepository::SANDBOX_BASE_URL);
 
         return $segmentRepository;
+    }
+
+    /**
+     * @param bool|true $cacheToken
+     *
+     * @return MemberDataSharingRepository $mbRepository
+     */
+    protected function getMemberDataSharingRepository($cacheToken = true)
+    {
+
+        $authClient = $this->getAuth($cacheToken);
+
+        $mbRepository = new MemberDataSharingRepository($authClient);
+        $mbRepository->setBaseUrl(MemberDataSharingRepository::SANDBOX_BASE_URL);
+
+        return $mbRepository;
     }
 
     /**
