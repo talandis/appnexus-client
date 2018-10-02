@@ -2,16 +2,13 @@
 
 namespace Audiens\AppnexusClient\exceptions;
 
-/**
- * Class AuthException
- */
 class AuthException extends \Exception
 {
 
     const DEFAULT_MESSAGE = "Something wrong with the autentication: ";
 
     /**
-     * @param $reason
+     * @param string $reason
      *
      * @return self
      */

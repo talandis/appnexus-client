@@ -3,7 +3,7 @@
 namespace Audiens\AppnexusClient\repository;
 
 use Audiens\AppnexusClient\entity\Error;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class RepositoryResponse
@@ -83,15 +83,14 @@ class RepositoryResponse
         $this->error = $error;
     }
 
-
     /**
-     * @param Response $response
+     * @param ResponseInterface $response
      *
      * @return RepositoryResponse
      */
-    public static function fromResponse(Response $response)
+    public static function fromResponse(ResponseInterface $response)
     {
-        $self = new self();
+        $self  = new self();
         $error = new Error();
 
         $self->setSuccessful(false);
@@ -100,8 +99,6 @@ class RepositoryResponse
         $self->setResponse($responseContent);
 
         $responseArray = json_decode($responseContent, true);
-
-
 
         if (isset($responseArray['response']['status'])) {
             $self->setSuccessful($responseArray['response']['status'] == self::STATUS_SUCCESS);
@@ -116,12 +113,7 @@ class RepositoryResponse
         return $self;
     }
 
-    /**
-     * @param Response $response
-     *
-     * @return string
-     */
-    private static function getResponseContent(Response $response)
+    private static function getResponseContent(ResponseInterface $response): string
     {
         $responseContent = $response->getBody()->getContents();
         $response->getBody()->rewind();

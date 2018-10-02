@@ -3,18 +3,14 @@
 namespace Test\unit;
 
 use Audiens\AppnexusClient\Auth;
-use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\entity\SegmentBilling;
 use Audiens\AppnexusClient\repository\SegmentBillingRepository;
-use Audiens\AppnexusClient\repository\SegmentRepository;
+use Doctrine\Common\Cache\VoidCache;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 use Prophecy\Argument;
 use Test\TestCase;
 
-/**
- * Class SegmentBillingRepositoryTest
- */
 class SegmentBillingRepositoryTest extends TestCase
 {
 
@@ -23,35 +19,28 @@ class SegmentBillingRepositoryTest extends TestCase
      */
     public function add_will_create_a_new_segment_and_return_a_repository_response()
     {
-
         $client = $this->prophesize(Auth::class);
 
-        $repository = new SegmentBillingRepository($client->reveal());
+        $repository = new SegmentBillingRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
-        $segment = new SegmentBilling();
-        $segment->setIsPublic(true);
-        $segment->setDataCategoryId(1001);
-        $segment->setDataProviderId(getenv('DATA_PROVIDER_ID'));
-        $segment->setActive(true);
-
+        $segmentBilling = new SegmentBilling();
+        $segmentBilling->setIsPublic(true);
+        $segmentBilling->setDataCategoryId(1001);
+        $segmentBilling->setDataProviderId(getenv('DATA_PROVIDER_ID'));
+        $segmentBilling->setActive(true);
 
         $fakeResponse = $this->getFakeResponse($this->getSingleBillingSegment());
 
         $payload = [
-            'segment-billing-category' => $segment->toArray(),
+            'segment-billing-category' => $segmentBilling->toArray(),
         ];
 
-        $client->request('POST', Argument::any(), ['body' => json_encode($payload)])
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('POST', Argument::any(), ['body' => json_encode($payload)])->willReturn($fakeResponse)->shouldBeCalled();
 
-        $repositoryResponse = $repository->add($segment);
-
-
+        $repositoryResponse = $repository->add($segmentBilling);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
-        $this->assertEquals(123, $segment->getId());
-
+        $this->assertEquals(123, $segmentBilling->getId());
     }
 
     /**
@@ -59,13 +48,12 @@ class SegmentBillingRepositoryTest extends TestCase
      */
     public function update_will_edit_an_existing_segment()
     {
-
         $client = $this->prophesize(Auth::class);
 
-        $repository = new SegmentBillingRepository($client->reveal());
+        $repository = new SegmentBillingRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
-        $segment = new SegmentBilling();
-        $segment->setId(123456);
+        $segmentBilling = new SegmentBilling();
+        $segmentBilling->setId(123456);
 
         $responseBody = json_encode(
             [
@@ -76,23 +64,20 @@ class SegmentBillingRepositoryTest extends TestCase
         );
 
         $fakeResponse = $this->prophesize(Response::class);
-        $stream = $this->prophesize(Stream::class);
+        $stream       = $this->prophesize(Stream::class);
         $stream->getContents()->willReturn($responseBody);
         $stream->rewind()->willReturn(null)->shouldBeCalled();
         $fakeResponse->getBody()->willReturn($stream->reveal());
 
         $payload = [
-            'segment-billing-category' => $segment->toArray(),
+            'segment-billing-category' => $segmentBilling->toArray(),
         ];
 
-        $client->request('PUT', Argument::any(), ['body' => json_encode($payload)])
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('PUT', Argument::any(), ['body' => json_encode($payload)])->willReturn($fakeResponse)->shouldBeCalled();
 
-        $repositoryResponse = $repository->update($segment);
+        $repositoryResponse = $repository->update($segmentBilling);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
-
     }
 
     /**
@@ -100,9 +85,8 @@ class SegmentBillingRepositoryTest extends TestCase
      */
     public function remove_will_remove_an_existing_segment()
     {
-
-        $client = $this->prophesize(Auth::class);
-        $repository = new SegmentBillingRepository($client->reveal());
+        $client     = $this->prophesize(Auth::class);
+        $repository = new SegmentBillingRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
         $id = '12346';
 
@@ -115,42 +99,34 @@ class SegmentBillingRepositoryTest extends TestCase
         );
 
         $fakeResponse = $this->prophesize(Response::class);
-        $stream = $this->prophesize(Stream::class);
+        $stream       = $this->prophesize(Stream::class);
         $stream->getContents()->willReturn($responseBody);
         $stream->rewind()->willReturn(null)->shouldBeCalled();
         $fakeResponse->getBody()->willReturn($stream->reveal());
 
-        $client->request('DELETE', Argument::containingString($id))
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('DELETE', Argument::containingString($id))->willReturn($fakeResponse)->shouldBeCalled();
 
-        $repositoryResponse = $repository->remove('member_id', $id);
+        $repositoryResponse = $repository->remove($id);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
-
     }
-
 
     /**
      * @test
      */
     public function find_all_will_return_an_array_of_segments()
     {
-
-        $client = $this->prophesize(Auth::class);
-        $repository = new SegmentBillingRepository($client->reveal());
+        $client       = $this->prophesize(Auth::class);
+        $repository   = new SegmentBillingRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
         $fakeResponse = $this->getFakeResponse($this->getMultipleBillingSegments());
 
-        $client->request('GET', Argument::containingString('start_element=3'))
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('GET', Argument::containingString('start_element=3'))->willReturn($fakeResponse)->shouldBeCalled();
 
-        $segments = $repository->findAll('member_id', 3, 3);
+        $segments = $repository->findAll(3, 3);
 
         $this->assertNotEmpty($segments);
         foreach ($segments as $segment) {
             $this->assertInstanceOf(SegmentBilling::class, $segment);
         }
-
     }
 }

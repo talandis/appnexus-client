@@ -2,81 +2,51 @@
 
 namespace Audiens\AppnexusClient\exceptions;
 
+use Audiens\AppnexusClient\entity\MemberDataSharing;
 use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\entity\SegmentBilling;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 
-/**
- * Class RepositoryException
- */
 class RepositoryException extends \Exception
 {
 
-    /**
-     * @param $responseContent
-     *
-     * @return self
-     */
-    public static function wrongFormat($responseContent)
+    public static function wrongFormat(string $responseContent): self
     {
         return new self($responseContent);
     }
 
-    /**
-     * @return RepositoryException
-     */
-    public static function missingSegmentBillingContent()
+    public static function missingSegmentBillingContent(): self
     {
         return new self('Response returned an empty segment-billing-category');
     }
 
-    /**
-     * @param Segment $segment
-     *
-     * @return self
-     */
-    public static function missingId($segment)
+    public static function missingId(Segment $segment): self
     {
-        return new self('Missing segment id for '.serialize($segment->getCode()));
+        return new self('Missing segment id for '.serialize($segment->getName()));
     }
 
-    /**
-     * @param SegmentBilling $segment
-     *
-     * @return self
-     */
-    public static function missingSegmentBillingId($segment)
+    public static function missingMemberDataSharingId(MemberDataSharing $memberDataSharing): self
     {
-        return new self('Missing segment billing id for '.serialize($segment->getId()));
+        return new self('Missing Member data sharing id for '.serialize($memberDataSharing));
     }
 
-    /**
-     * @param RepositoryResponse $repositoryResponse
-     *
-     * @return self
-     */
-    public static function failed(RepositoryResponse $repositoryResponse)
+    public static function missingSegmentBillingId(SegmentBilling $segmentsegmentBilling): self
+    {
+        return new self('Missing segment billing id for '.serialize($segmentsegmentBilling->getId()));
+    }
+
+    public static function failed(RepositoryResponse $repositoryResponse): self
     {
         return new self('Failed call: '.$repositoryResponse->getError()->getError());
     }
 
-    /**
-     * @param string $reason
-     *
-     * @return self
-     */
-    public static function genericFailed($reason)
+    public static function genericFailed(string $reason): self
     {
         return new self($reason);
     }
 
-    /**+
-     * @param $missingIndex
-     *
-     * @return self
-     */
-    public static function missingIndex($missingIndex)
+    public static function missingIndex(string $missingIndex): self
     {
-        return new self('Invalid reposnse missing: '. $missingIndex);
+        return new self('Invalid reposnse missing: '.$missingIndex);
     }
 }

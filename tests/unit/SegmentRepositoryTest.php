@@ -5,14 +5,12 @@ namespace Test\unit;
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\entity\Segment;
 use Audiens\AppnexusClient\repository\SegmentRepository;
+use Doctrine\Common\Cache\VoidCache;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 use Prophecy\Argument;
 use Test\TestCase;
 
-/**
- * Class SegmentRepositoryTest
- */
 class SegmentRepositoryTest extends TestCase
 {
 
@@ -21,10 +19,9 @@ class SegmentRepositoryTest extends TestCase
      */
     public function add_will_create_a_new_segment_and_return_a_repository_response()
     {
-
         $client = $this->prophesize(Auth::class);
 
-        $repository = new SegmentRepository($client->reveal());
+        $repository = new SegmentRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
         $segment = new Segment();
         $segment->setName('Test segment');
@@ -35,15 +32,12 @@ class SegmentRepositoryTest extends TestCase
             'segment' => $segment->toArray(),
         ];
 
-        $client->request('POST', Argument::any(), ['body' => json_encode($payload)])
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('POST', Argument::any(), ['body' => json_encode($payload)])->willReturn($fakeResponse)->shouldBeCalled();
 
         $repositoryResponse = $repository->add($segment);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
         $this->assertEquals(5012, $segment->getId());
-
     }
 
     /**
@@ -51,10 +45,9 @@ class SegmentRepositoryTest extends TestCase
      */
     public function update_will_edit_an_existing_segment()
     {
-
         $client = $this->prophesize(Auth::class);
 
-        $repository = new SegmentRepository($client->reveal());
+        $repository = new SegmentRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
         $segment = new Segment();
         $segment->setName('Test segment');
@@ -69,7 +62,7 @@ class SegmentRepositoryTest extends TestCase
         );
 
         $fakeResponse = $this->prophesize(Response::class);
-        $stream = $this->prophesize(Stream::class);
+        $stream       = $this->prophesize(Stream::class);
         $stream->getContents()->willReturn($responseBody);
         $stream->rewind()->willReturn(null)->shouldBeCalled();
         $fakeResponse->getBody()->willReturn($stream->reveal());
@@ -78,14 +71,11 @@ class SegmentRepositoryTest extends TestCase
             'segment' => $segment->toArray(),
         ];
 
-        $client->request('PUT', Argument::any(), ['body' => json_encode($payload)])
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('PUT', Argument::any(), ['body' => json_encode($payload)])->willReturn($fakeResponse)->shouldBeCalled();
 
         $repositoryResponse = $repository->update($segment);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
-
     }
 
     /**
@@ -93,9 +83,8 @@ class SegmentRepositoryTest extends TestCase
      */
     public function remove_will_remove_an_existing_segment()
     {
-
-        $client = $this->prophesize(Auth::class);
-        $repository = new SegmentRepository($client->reveal());
+        $client     = $this->prophesize(Auth::class);
+        $repository = new SegmentRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
         $id = '12346';
 
@@ -108,19 +97,16 @@ class SegmentRepositoryTest extends TestCase
         );
 
         $fakeResponse = $this->prophesize(Response::class);
-        $stream = $this->prophesize(Stream::class);
+        $stream       = $this->prophesize(Stream::class);
         $stream->getContents()->willReturn($responseBody);
         $stream->rewind()->willReturn(null)->shouldBeCalled();
         $fakeResponse->getBody()->willReturn($stream->reveal());
 
-        $client->request('DELETE', Argument::containingString($id))
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('DELETE', Argument::containingString($id))->willReturn($fakeResponse)->shouldBeCalled();
 
-        $repositoryResponse = $repository->remove('member_id', $id);
+        $repositoryResponse = $repository->remove( $id);
 
         $this->assertTrue($repositoryResponse->isSuccessful());
-
     }
 
     /**
@@ -128,22 +114,18 @@ class SegmentRepositoryTest extends TestCase
      */
     public function find_one_by_id_will_return_a_segment()
     {
-
-        $client = $this->prophesize(Auth::class);
-        $repository = new SegmentRepository($client->reveal());
+        $client     = $this->prophesize(Auth::class);
+        $repository = new SegmentRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
         $id = '5012';
 
         $fakeResponse = $this->getFakeResponse($this->getSingleSegment());
 
-        $client->request('GET', Argument::containingString($id))
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('GET', Argument::containingString($id))->willReturn($fakeResponse)->shouldBeCalled();
 
-        $segment = $repository->findOneById('member_id', $id);
+        $segment = $repository->findOneById( $id);
 
         $this->assertEquals(5012, $segment->getId());
-
     }
 
     /**
@@ -151,23 +133,17 @@ class SegmentRepositoryTest extends TestCase
      */
     public function find_all_will_return_an_array_of_segments()
     {
-
-        $client = $this->prophesize(Auth::class);
-        $repository = new SegmentRepository($client->reveal());
-
-        $id = '5012';
+        $client     = $this->prophesize(Auth::class);
+        $repository = new SegmentRepository($client->reveal(), new VoidCache(), getenv('MEMBER_ID'));
 
         $fakeResponse = $this->getFakeResponse($this->getMultipleSegments());
 
-        $client->request('GET', Argument::containingString('start_element=3'))
-               ->willReturn($fakeResponse)
-               ->shouldBeCalled();
+        $client->request('GET', Argument::containingString('start_element=3'))->willReturn($fakeResponse)->shouldBeCalled();
 
-        $segments = $repository->findAll('member_id', 3, 3);
+        $segments = $repository->findAll( 3, 3);
 
         foreach ($segments as $segment) {
             $this->assertInstanceOf(Segment::class, $segment);
         }
-
     }
 }

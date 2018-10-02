@@ -2,13 +2,8 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-use Zend\Hydrator\ObjectProperty;
 use Zend\Hydrator\Reflection;
-use Zend\Stdlib\Hydrator;
 
-/**
- * Class HydratableTrait
- */
 trait HydratableTrait
 {
     /**
@@ -18,7 +13,6 @@ trait HydratableTrait
      */
     public static function fromArray(array $objectArray)
     {
-
         $object = new self();
         self::getHydrator()->hydrate($objectArray, $object);
 
@@ -34,12 +28,10 @@ trait HydratableTrait
     }
 
     /**
-     * @return ObjectProperty
+     * @return Reflection
      */
     private static function getHydrator()
     {
-        $hydrator = new Reflection();
-
-        return $hydrator;
+        return new Reflection();
     }
 }

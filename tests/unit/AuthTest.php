@@ -52,7 +52,7 @@ class AuthTest extends TestCase
     }
 
     /**
-     * @param $token
+     * @param string $token
      *
      * @return Response
      */

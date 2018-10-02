@@ -7,6 +7,7 @@ use Audiens\AppnexusClient\entity\UploadJobStatus;
 use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\exceptions\UploadException;
 use Audiens\AppnexusClient\service\UserUpload;
+use Doctrine\Common\Cache\VoidCache;
 use Prophecy\Argument;
 use Test\TestCase;
 
@@ -24,7 +25,7 @@ class UserUploadTest extends TestCase
 
         $client = $this->prophesize(Auth::class);
 
-        $userUpload = new UserUpload($client->reveal());
+        $userUpload = new UserUpload($client->reveal(), new VoidCache());
 
         $this->expectException(UploadException::class);
 
@@ -39,7 +40,7 @@ class UserUploadTest extends TestCase
     {
 
         $client = $this->prophesize(Auth::class);
-        $userUpload = new UserUpload($client->reveal());
+        $userUpload = new UserUpload($client->reveal(), new VoidCache());
 
         $uploadTicket = new UploadTicket();
         $uploadTicket->setMemberId(123456);
@@ -62,7 +63,7 @@ class UserUploadTest extends TestCase
     {
 
         $client = $this->prophesize(Auth::class);
-        $userUpload = new UserUpload($client->reveal());
+        $userUpload = new UserUpload($client->reveal(), new VoidCache());
 
         $uploadTicket = new UploadTicket();
         $uploadTicket->setMemberId(123456);
@@ -84,7 +85,7 @@ class UserUploadTest extends TestCase
     {
 
         $client = $this->prophesize(Auth::class);
-        $userUpload = new UserUpload($client->reveal());
+        $userUpload = new UserUpload($client->reveal(), new VoidCache());
 
         $fakeResponse = $this->getFakeResponse($this->getFailedResponse());
         $client->request(Argument::any(), Argument::any())->willReturn($fakeResponse);
@@ -102,7 +103,7 @@ class UserUploadTest extends TestCase
     {
 
         $client = $this->prophesize(Auth::class);
-        $userUpload = new UserUpload($client->reveal());
+        $userUpload = new UserUpload($client->reveal(), new VoidCache());
 
         $fakeResponse = $this->getFakeResponse($this->getUploadHystory());
 
@@ -125,7 +126,7 @@ class UserUploadTest extends TestCase
     {
 
         $client = $this->prophesize(Auth::class);
-        $userUpload = new UserUpload($client->reveal());
+        $userUpload = new UserUpload($client->reveal(), new VoidCache());
 
         $fakeResponse = $this->getFakeResponse($this->getUploadTicket());
 

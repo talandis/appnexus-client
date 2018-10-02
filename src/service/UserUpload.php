@@ -5,30 +5,27 @@ namespace Audiens\AppnexusClient\service;
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\CachableTrait;
 use Audiens\AppnexusClient\CacheableInterface;
-use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\entity\UploadJobStatus;
+use Audiens\AppnexusClient\entity\UploadTicket;
 use Audiens\AppnexusClient\exceptions\UploadException;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 use Doctrine\Common\Cache\Cache;
-use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 
-/**
- * Class UserSegmentRepository
- */
 class UserUpload implements CacheableInterface
 {
 
     use CachableTrait;
 
-    const BASE_URL = 'http://api.adnxs.com/batch-segment';
-
-    const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/batch-segment';
+    public const BASE_URL         = 'http://api.adnxs.com/batch-segment';
+    public const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/batch-segment';
+    public const CACHE_NAMESPACE  = 'appnexus_segment_user_upload';
+    public const CACHE_EXPIRATION = 3600;
 
     /** @var  \SplQueue */
     protected $userSegments;
 
-    /** @var Client|Auth */
+    /** @var ClientInterface|Auth */
     protected $client;
 
     /** @var  int */
@@ -40,21 +37,14 @@ class UserUpload implements CacheableInterface
     /** @var  string */
     protected $baseUrl;
 
-    const CACHE_NAMESPACE = 'appnexus_segment_user_upload';
-
-    const CACHE_EXPIRATION = 3600;
-
     /**
-     * SegmentRepository constructor.
-     *
      * @param ClientInterface $client
-     * @param Cache|null      $cache
+     * @param Cache           $cache
      */
-    public function __construct(ClientInterface $client, Cache $cache = null)
+    public function __construct(ClientInterface $client, Cache $cache)
     {
-        $this->client = $client;
-        $this->cache = $cache;
-        $this->cacheEnabled = $cache instanceof Cache;
+        $this->client  = $client;
+        $this->cache   = $cache;
         $this->baseUrl = self::BASE_URL;
     }
 
@@ -74,10 +64,9 @@ class UserUpload implements CacheableInterface
         $this->baseUrl = $baseUrl;
     }
 
-
     /**
-     * @param $memberId
-     * @param $fileAsString
+     * @param int    $memberId
+     * @param string $fileAsString
      *
      * @return UploadJobStatus
      * @throws UploadException
@@ -106,14 +95,13 @@ class UserUpload implements CacheableInterface
     }
 
     /**
-     * @param $memberId
+     * @param int $memberId
      *
-     * @return UploadJobStatus
+     * @return UploadTicket
      * @throws UploadException
      */
     public function getUploadTicket($memberId)
     {
-
         $compiledUrl = $this->baseUrl.'?member_id='.$memberId;
 
         $response = $this->client->request('POST', $compiledUrl);
@@ -143,7 +131,6 @@ class UserUpload implements CacheableInterface
      */
     public function getJobStatus(UploadTicket $uploadTicket)
     {
-
         $compiledUrl = $this->baseUrl."?member_id={$uploadTicket->getMemberId()}&job_id={$uploadTicket->getJobId()}";
 
         $response = $this->client->request('GET', $compiledUrl);
@@ -166,7 +153,7 @@ class UserUpload implements CacheableInterface
     }
 
     /**
-     * @param     $memberId
+     * @param int $memberId
      * @param int $start
      * @param int $maxResults
      *
@@ -175,7 +162,6 @@ class UserUpload implements CacheableInterface
      */
     public function getUploadHistory($memberId, $start = 0, $maxResults = 100)
     {
-
         $compiledUrl = $this->baseUrl."?member_id=$memberId&start_element=$start&num_elements=$maxResults";
 
         $response = $this->client->request('GET', $compiledUrl);

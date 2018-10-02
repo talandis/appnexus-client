@@ -22,11 +22,12 @@ class AppnexusStrategy implements AuthStrategyInterface
     /** @var Cache */
     protected $cache;
 
+    /** @var ClientInterface  */
+    protected $client;
+
     /**
-     * AdnxStrategy constructor.
-     *
      * @param ClientInterface $clientInterface
-     * @param Cache|null      $cache
+     * @param Cache      $cache
      */
     public function __construct(ClientInterface $clientInterface, Cache $cache)
     {

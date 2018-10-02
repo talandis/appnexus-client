@@ -10,28 +10,89 @@ use Audiens\AppnexusClient\entity\ReportTicket;
 use Audiens\AppnexusClient\exceptions\ReportException;
 use Audiens\AppnexusClient\repository\RepositoryResponse;
 use Doctrine\Common\Cache\Cache;
-use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 
-/**
- * Class Report
- */
 class Report implements CacheableInterface
 {
 
     use CachableTrait;
 
-    const BASE_URL = 'http://api.adnxs.com/report';
-    const BASE_URL_DOWNLOAD = 'http://api.adnxs.com/';
+    public const BASE_URL                  = 'http://api.adnxs.com/report';
+    public const BASE_URL_DOWNLOAD         = 'http://api.adnxs.com/';
+    public const SANDBOX_BASE_URL          = 'http://api-test.adnxs.com/report';
+    public const SANDBOX_BASE_URL_DOWNLOAD = 'http://api-test.adnxs.com/';
+    public const CACHE_NAMESPACE = 'appnexus_report';
+    public const CACHE_EXPIRATION = 3600;
+    public const REVENUE_REPORT
+        = [
+            'report' => [
+                'report_type' => 'seller_platform_billing',
+                'timezone' => 'PST',
+                'report_interval' => 'last_7_days',
+                'name' => 'Weekly SSP Revenue Report',
+                'columns' => [
+                    0 => 'day',
+                    1 => 'seller_member_id',
+                    2 => 'publisher_id',
+                    3 => 'publisher_name',
+                    4 => 'publisher_code',
+                    5 => 'buyer_member_id',
+                    6 => 'buyer_member_name',
+                    7 => 'imps',
+                    8 => 'imps_delivered',
+                    9 => 'seller_revenue',
+                ],
+            ],
+        ];
 
-    const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/report';
-    const SANDBOX_BASE_URL_DOWNLOAD = 'http://api-test.adnxs.com/';
+    public const SEGMENT_LOAD_REPORT_CUMULATIVE_VC
+        = [
+            'report' => [
+                'report_type' => 'segment_load',
+                'timezone' => 'PST',
+                'report_interval' => 'month_to_date',
+                'name' => 'Cumulative VC report',
+                'columns' => [
+                    'avg_daily_uniques',
+                    'month',
+                ],
 
+                'groups' => [
+                    'month',
+
+                ],
+                'orders' => [
+                    'avg_daily_uniques',
+                ],
+            ],
+        ];
+
+    public const SEGMENT_LOAD_REPORT_DAILY_VC
+        = [
+            'report' => [
+                'report_type' => 'segment_load',
+                'timezone' => 'PST',
+                'report_interval' => 'today',
+                'name' => 'Cumulative VC report',
+                'columns' => [
+                    'daily_uniques',
+                    'day',
+                ],
+
+                'groups' => [
+                    'day',
+
+                ],
+                'orders' => [
+                    'daily_uniques',
+                ],
+            ],
+        ];
 
     /** @var  \SplQueue */
     protected $userSegments;
 
-    /** @var Client|Auth */
+    /** @var ClientInterface|Auth */
     protected $client;
 
     /** @var  int */
@@ -40,99 +101,18 @@ class Report implements CacheableInterface
     /** @var  Cache */
     protected $cache;
 
-    const CACHE_NAMESPACE = 'appnexus_report';
-
-    const CACHE_EXPIRATION = 3600;
-
-    const REVENUE_REPORT = [
-        'report' =>
-            [
-                'report_type' => 'seller_platform_billing',
-                'timezone' => 'PST',
-                'report_interval' => 'last_7_days',
-                'name' => 'Weekly SSP Revenue Report',
-                'columns' =>
-                    [
-                        0 => 'day',
-                        1 => 'seller_member_id',
-                        2 => 'publisher_id',
-                        3 => 'publisher_name',
-                        4 => 'publisher_code',
-                        5 => 'buyer_member_id',
-                        6 => 'buyer_member_name',
-                        7 => 'imps',
-                        8 => 'imps_delivered',
-                        9 => 'seller_revenue',
-                    ],
-            ],
-    ];
-
-
-    const SEGMENT_LOAD_REPORT_CUMULATIVE_VC = [
-        'report' =>
-            [
-                'report_type' => 'segment_load',
-                'timezone' => 'PST',
-                'report_interval' => 'month_to_date',
-                'name' => 'Cumulative VC report',
-                'columns' =>
-                    [
-                        "avg_daily_uniques",
-                        "month",
-                    ],
-
-                "groups" => [
-                    "month",
-
-                ],
-                    "orders" => [
-                    "avg_daily_uniques"
-                    ],
-            ],
-    ];
-
-    const SEGMENT_LOAD_REPORT_DAILY_VC = [
-        'report' =>
-            [
-                'report_type' => 'segment_load',
-                'timezone' => 'PST',
-                'report_interval' => 'today',
-                'name' => 'Cumulative VC report',
-                'columns' =>
-                    [
-                        "daily_uniques",
-                        "day",
-                    ],
-
-                "groups" => [
-                    "day",
-
-                ],
-                    "orders" => [
-                    "daily_uniques"
-                    ],
-            ],
-    ];
-
     /** @var string */
     protected $baseUrl;
 
     /** @var  string */
     protected $baseUrlDownload;
 
-    /**
-     * SegmentRepository constructor.
-     *
-     * @param ClientInterface $client
-     * @param Cache|null $cache
-     */
-    public function __construct(ClientInterface $client, Cache $cache = null)
+    public function __construct(ClientInterface $client, Cache $cache)
     {
         $this->client = $client;
-        $this->cache = $cache;
-        $this->cacheEnabled = $cache instanceof Cache;
+        $this->cache  = $cache;
 
-        $this->baseUrl = self::BASE_URL;
+        $this->baseUrl         = self::BASE_URL;
         $this->baseUrlDownload = self::BASE_URL_DOWNLOAD;
     }
 
@@ -168,7 +148,6 @@ class Report implements CacheableInterface
         $this->baseUrlDownload = $baseUrlDownload;
     }
 
-
     /**
      * @param array $reportFormat
      *
@@ -177,7 +156,6 @@ class Report implements CacheableInterface
      */
     public function getReportTicket($reportFormat = self::REVENUE_REPORT)
     {
-
         $compiledUrl = $this->baseUrl;
 
         $response = $this->client->request('POST', $compiledUrl, ['body' => json_encode($reportFormat)]);
@@ -199,7 +177,6 @@ class Report implements CacheableInterface
         return $reportTicket;
     }
 
-
     /**
      * @param ReportTicket $reportTicket
      *
@@ -208,8 +185,7 @@ class Report implements CacheableInterface
      */
     public function getReportStatus(ReportTicket $reportTicket)
     {
-
-        $compiledUrl = $this->baseUrl . '?id=' . $reportTicket->getReportId();
+        $compiledUrl = $this->baseUrl.'?id='.$reportTicket->getReportId();
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -236,7 +212,6 @@ class Report implements CacheableInterface
         return $reportStatus;
     }
 
-
     /**
      * @param ReportStatus $reportStatus
      *
@@ -253,19 +228,17 @@ class Report implements CacheableInterface
             throw ReportException::validation('missing url in the report status');
         }
 
-        $cacheKey = self::CACHE_NAMESPACE . sha1($reportStatus->getUrl());
+        $cacheKey = self::CACHE_NAMESPACE.sha1($reportStatus->getUrl());
 
-        if ($this->isCacheEnabled()) {
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
-            }
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
         }
 
-        $compiledUrl = $this->baseUrlDownload . $reportStatus->getUrl();
+        $compiledUrl = $this->baseUrlDownload.$reportStatus->getUrl();
 
         $response = $this->client->request('GET', $compiledUrl);
 
-        $lines = explode(PHP_EOL, $response->getBody()->getContents());
+        $lines  = explode(PHP_EOL, $response->getBody()->getContents());
         $result = [];
         foreach ($lines as $line) {
             if (!empty($line)) {
@@ -273,9 +246,7 @@ class Report implements CacheableInterface
             }
         }
 
-        if ($this->isCacheEnabled()) {
-            $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
-        }
+        $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
 
         return $result;
     }

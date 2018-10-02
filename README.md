@@ -37,7 +37,6 @@ $appnexus = new AppnexusFacade($username, $password, $memberId);
 
 $segment = new Segment();
 $segment->setName('Male');
-$segment->setCategory('Gender');
 $segment->setMemberId($memberId);
 $segment->setActive(true);
 

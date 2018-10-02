@@ -5,34 +5,30 @@ namespace Test;
 use Audiens\AppnexusClient\Auth;
 use Audiens\AppnexusClient\authentication\SandboxStrategy;
 use Audiens\AppnexusClient\facade\AppnexusFacade;
-use Audiens\AppnexusClient\repository\CategoryRepository;
 use Audiens\AppnexusClient\repository\MemberDataSharingRepository;
 use Audiens\AppnexusClient\repository\SegmentBillingRepository;
 use Audiens\AppnexusClient\repository\SegmentRepository;
 use Audiens\AppnexusClient\service\Report;
 use Audiens\AppnexusClient\service\UserUpload;
 use Doctrine\Common\Cache\FilesystemCache;
+use Doctrine\Common\Cache\VoidCache;
 use Dotenv\Dotenv;
 use GuzzleHttp\Client;
-use Test\functional\MemberDataSharingRepositoryResponse;
 
-/**
- * Class SegmentRepositoryFunctionTest
- */
-class FunctionalTestCase extends \PHPUnit_Framework_TestCase
+class FunctionalTestCase extends \PHPUnit\Framework\TestCase
 {
 
-    const REQUIRED_ENV = [
-        'USERNAME',
-        'PASSWORD',
-        'MEMBER_ID',
-        'DATA_PROVIDER_ID',
-        'DATA_CATEGORY_ID'
-    ];
+    public const REQUIRED_ENV
+        = [
+            'USERNAME',
+            'PASSWORD',
+            'MEMBER_ID',
+            'DATA_PROVIDER_ID',
+            'DATA_CATEGORY_ID',
+        ];
 
     protected function setUp()
     {
-
         if (!$this->checkEnv()) {
             $this->markTestSkipped('cannotInitialize enviroment tests will be skipped');
         }
@@ -40,13 +36,8 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         parent::setUp();
     }
 
-
-    /**
-     * @return bool
-     */
-    private function checkEnv()
+    private function checkEnv(): bool
     {
-
         try {
             $dotenv = new Dotenv(__DIR__.'/../');
             $dotenv->load();
@@ -64,36 +55,23 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         return $env;
     }
 
-
-    /**
-     * @param bool|true $cacheToken
-     *
-     * @return Auth
-     */
-    protected function getAuth($cacheToken = true)
+    protected function getAuth(bool $cacheToken = true): Auth
     {
-        $cache = $cacheToken ? new FilesystemCache('build') : null;
+        $cache  = $cacheToken ? new FilesystemCache('build') : null;
         $client = new Client();
 
         $authStrategy = new SandboxStrategy(new Client(), $cache);
-
 
         $authClient = new Auth(getenv('USERNAME'), getenv('PASSWORD'), $client, $authStrategy);
 
         return $authClient;
     }
 
-    /**
-     * @param bool|true $cacheToken
-     *
-     * @return SegmentBillingRepository
-     */
-    protected function getSegmentBillingRepository($cacheToken = true)
+    protected function getSegmentBillingRepository(bool $cacheToken = true): SegmentBillingRepository
     {
-
         $authClient = $this->getAuth($cacheToken);
 
-        $segmentBillingRepository = new SegmentBillingRepository($authClient);
+        $segmentBillingRepository = new SegmentBillingRepository($authClient, new VoidCache(), getenv('MEMBER_ID'));
         $segmentBillingRepository->setBaseUrl(SegmentBillingRepository::SANDBOX_BASE_URL);
 
         return $segmentBillingRepository;
@@ -106,10 +84,9 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getSegmentRepository($cacheToken = true)
     {
-
         $authClient = $this->getAuth($cacheToken);
 
-        $segmentRepository = new SegmentRepository($authClient);
+        $segmentRepository = new SegmentRepository($authClient, new VoidCache(), getenv('MEMBER_ID'));
         $segmentRepository->setBaseUrl(SegmentRepository::SANDBOX_BASE_URL);
 
         return $segmentRepository;
@@ -122,32 +99,13 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMemberDataSharingRepository($cacheToken = true)
     {
-
         $authClient = $this->getAuth($cacheToken);
 
-        $mbRepository = new MemberDataSharingRepository($authClient);
+        $mbRepository = new MemberDataSharingRepository($authClient, new VoidCache());
         $mbRepository->setBaseUrl(MemberDataSharingRepository::SANDBOX_BASE_URL);
 
         return $mbRepository;
     }
-
-    /**
-     * @param bool|true $cacheToken
-     * @return CategoryRepository
-     */
-    protected function getCategoryRepository($cacheToken = true)
-    {
-
-        $authClient = $this->getAuth($cacheToken);
-
-        $categoryRepository = new CategoryRepository($authClient);
-        $categoryRepository->setBaseUrl(CategoryRepository::SANDBOX_BASE_URL);
-
-        return $categoryRepository;
-    }
-
-
-
 
     /**
      * @param bool|true $cacheToken
@@ -158,7 +116,7 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
     {
         $authClient = $this->getAuth($cacheToken);
 
-        $userUpload = new UserUpload($authClient);
+        $userUpload = new UserUpload($authClient, new VoidCache());
         $userUpload->setBaseUrl(UserUpload::SANDBOX_BASE_URL);
 
         return $userUpload;
@@ -173,7 +131,7 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
     {
         $authClient = $this->getAuth($cacheToken);
 
-        $userUpload = new Report($authClient);
+        $userUpload = new Report($authClient, new VoidCache());
         $userUpload->setBaseUrl(Report::SANDBOX_BASE_URL);
         $userUpload->setBaseUrlDownload(Report::SANDBOX_BASE_URL_DOWNLOAD);
 
@@ -185,10 +143,8 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getFacade()
     {
-
         $facade = new AppnexusFacade(getenv('USERNAME'), getenv('PASSWORD'), getenv('MEMBER_ID'));
 
         return $facade;
-
     }
 }

@@ -3,12 +3,8 @@
 namespace Test\functional;
 
 use Audiens\AppnexusClient\entity\Segment;
-use Prophecy\Argument;
 use Test\FunctionalTestCase;
 
-/**
- * Class SegmentRepositoryTest
- */
 class SegmentRepositoryTest extends FunctionalTestCase
 {
 
@@ -20,17 +16,14 @@ class SegmentRepositoryTest extends FunctionalTestCase
         $repository = $this->getSegmentRepository();
 
         $segment = new Segment();
-        $segment->setName('Test segment'.uniqid());
-        $segment->setCategory('Test category'.uniqid());
+        $segment->setName('Test segment'.\uniqid('', true));
         $segment->setMemberId(getenv('MEMBER_ID'));
         $segment->setActive(true);
 
         $repositoryResponse = $repository->add($segment);
 
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
         $this->assertNotNull($segment->getId());
-
-
     }
 
     /**
@@ -38,29 +31,21 @@ class SegmentRepositoryTest extends FunctionalTestCase
      */
     public function find_one_by_id_will_retrive_a_newly_created_segment()
     {
-
         $repository = $this->getSegmentRepository();
 
         $segment = new Segment();
 
-        $segment->setName('Test segment '.uniqid());
-        $segment->setCategory('a-test-category');
-        $segment->setDescription('a test description 123456');
-        $segment->setCode(rand(0, 999) * rand(0, 999));
-        $segment->setPrice(10.11);
+        $segment->setName('Test segment '.\uniqid('', true));
         $segment->setMemberId(getenv('MEMBER_ID'));
         $segment->setActive(true);
 
         $repository->add($segment);
 
-        $segmentFound = $repository->findOneById($segment->getMemberId(), $segment->getId());
+        $segmentFound = $repository->findOneById($segment->getId());
 
         $this->assertNotNull($segmentFound, 'find one by id segment not found');
 
         $this->assertEquals($segment->getId(), $segmentFound->getId());
-        $this->assertEquals($segment->getDescription(), $segmentFound->getDescription());
-
-
     }
 
     /**
@@ -68,29 +53,23 @@ class SegmentRepositoryTest extends FunctionalTestCase
      */
     public function find_all_will_return_multiple_segments()
     {
-
         $repository = $this->getSegmentRepository();
 
         $segment = new Segment();
 
-        $segment->setName('Test segment '.uniqid());
-        $segment->setCategory('a-test-category');
-        $segment->setDescription('a test description 123456');
-        $segment->setCode(rand(0, 999) * rand(0, 999));
-        $segment->setPrice(10.11);
+        $segment->setName('Test segment '.\uniqid('', true));
         $segment->setMemberId(getenv('MEMBER_ID'));
         $segment->setActive(true);
 
         $repository->add($segment);
 
-        $segments = $repository->findAll(getenv('MEMBER_ID'), 0, 2);
+        $segments = $repository->findAll(0, 2);
 
         $this->assertCount(2, $segments);
 
         foreach ($segments as $segment) {
             $this->assertInstanceOf(Segment::class, $segment);
         }
-
     }
 
     /**
@@ -102,23 +81,17 @@ class SegmentRepositoryTest extends FunctionalTestCase
 
         $segment = new Segment();
 
-        $segment->setName('Test segment '.uniqid());
-        $segment->setCategory('a-test-category');
-        $segment->setDescription('a test description 123456');
-        $segment->setCode(rand(0, 999) * rand(0, 999));
-        $segment->setPrice(10.11);
+        $segment->setName('Test segment '.\uniqid('', true));
         $segment->setMemberId(getenv('MEMBER_ID'));
         $segment->setActive(true);
 
         $repositoryResponse = $repository->add($segment);
 
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
 
-        $repositoryResponse = $repository->remove($segment->getMemberId(), $segment->getId());
+        $repositoryResponse = $repository->remove($segment->getId());
 
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
-
-
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
     }
 
     /**
@@ -126,29 +99,27 @@ class SegmentRepositoryTest extends FunctionalTestCase
      */
     public function update_will_edit_an_existing_segment()
     {
-
         $repository = $this->getSegmentRepository();
 
         $segment = new Segment();
 
-        $segment->setName('Test segment '.uniqid());
-        $segment->setCategory('a-test-category');
-        $segment->setDescription('a test description 123456');
-        $segment->setCode(rand(0, 999) * rand(0, 999));
-        $segment->setPrice(10.11);
+        $nameBefore = \uniqid('', true);
+
+        $segment->setName($nameBefore);
         $segment->setMemberId(getenv('MEMBER_ID'));
         $segment->setActive(true);
 
         $repositoryResponse = $repository->add($segment);
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
 
-        $segment->setPrice(12.11);
+        $nameAfter = \uniqid('', true);
+
+        $segment->setName($nameAfter);
 
         $repositoryResponse = $repository->update($segment);
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
 
-        $this->assertEquals(12.11, $segment->getPrice());
-
+        $this->assertEquals($nameAfter, $segment->getName());
     }
 
 }

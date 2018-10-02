@@ -3,12 +3,8 @@
 namespace Test\functional;
 
 use Audiens\AppnexusClient\service\Report;
-use Prophecy\Argument;
 use Test\FunctionalTestCase;
 
-/**
- * Class ReportTest
- */
 class ReportTest extends FunctionalTestCase
 {
 
@@ -17,10 +13,8 @@ class ReportTest extends FunctionalTestCase
      */
     public function get_ticket_will_return_an_object()
     {
-
-
         $reportService = $this->getReport();
-        $reportTicket = $reportService->getReportTicket();
+        $reportTicket  = $reportService->getReportTicket();
         $this->assertNotEmpty($reportTicket->getReportId());
     }
 
@@ -30,11 +24,9 @@ class ReportTest extends FunctionalTestCase
     public function get_job_status_will_return_an_object()
     {
 
-        $this->markTestSkipped('sandbox endpoint bug');
-
         $reportService = $this->getReport();
-        $reportTicket = $reportService->getReportTicket();
-        $reportStatus = $reportService->getReportStatus($reportTicket);
+        $reportTicket  = $reportService->getReportTicket();
+        $reportStatus  = $reportService->getReportStatus($reportTicket);
 
         $this->assertNotEmpty($reportStatus->getReportId());
         $this->assertNotEmpty($reportStatus->getStatus());
@@ -46,11 +38,9 @@ class ReportTest extends FunctionalTestCase
     public function get_report_will_return_an_array()
     {
 
-        $this->markTestSkipped('sandbox endpoint bug');
-
         $reportService = $this->getReport();
-        $reportTicket = $reportService->getReportTicket();
-        $reportStatus = $reportService->getReportStatus($reportTicket);
+        $reportTicket  = $reportService->getReportTicket();
+        $reportStatus  = $reportService->getReportStatus($reportTicket);
 
         $reportService->disableCache();
         $report = $reportService->getReport($reportStatus);
@@ -62,6 +52,5 @@ class ReportTest extends FunctionalTestCase
 
         $this->assertEquals($expectedHeaders, $report[0]);
     }
-
 
 }

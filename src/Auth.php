@@ -4,16 +4,13 @@ namespace Audiens\AppnexusClient;
 
 use Audiens\AppnexusClient\authentication\AuthStrategyInterface;
 use Doctrine\Common\Cache\Cache;
-use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
- * Class Auth
- *
  * see https://wiki.apnexus.com/display/adnexusdocumentation/Segment+Service
- *
  */
 class Auth implements ClientInterface
 {
@@ -21,7 +18,7 @@ class Auth implements ClientInterface
     /** @var  Cache */
     protected $cache;
 
-    /** @var  Client */
+    /** @var  ClientInterface */
     protected $client;
 
     /** @var string */
@@ -35,12 +32,6 @@ class Auth implements ClientInterface
 
     protected $authStrategy;
 
-    /**
-     * @param                       $username
-     * @param                       $password
-     * @param ClientInterface       $clientInterface
-     * @param AuthStrategyInterface $authStrategy
-     */
     public function __construct(
         $username,
         $password,
@@ -50,21 +41,20 @@ class Auth implements ClientInterface
         $this->username = $username;
         $this->password = $password;
 
-        $this->client = $clientInterface;
+        $this->client       = $clientInterface;
         $this->authStrategy = $authStrategy;
     }
 
     /**
-     * @param string $method
-     * @param null   $uri
-     * @param array  $options
+     * @param string              $method
+     * @param string|UriInterface $uri
+     * @param array               $options
      *
      * @return mixed|\Psr\Http\Message\ResponseInterface
      * @throws \Exception
      */
-    public function request($method, $uri = null, array $options = [])
+    public function request($method, $uri, array $options = [])
     {
-
         $optionForToken = [
             'headers' => [
                 'Authorization' => $this->authStrategy->authenticate($this->username, $this->password),
@@ -89,7 +79,6 @@ class Auth implements ClientInterface
 
         return $this->client->request($method, $uri, $options);
     }
-
 
     /**
      * @inheritDoc
@@ -123,15 +112,8 @@ class Auth implements ClientInterface
         return $this->client->getConfig($option);
     }
 
-
-    /**
-     * @param Response $response
-     *
-     * @return bool
-     */
-    protected function needToRevalidate(Response $response)
+    protected function needToRevalidate(ResponseInterface $response): bool
     {
-
         $content = json_decode($response->getBody()->getContents(), true);
 
         $response->getBody()->rewind();

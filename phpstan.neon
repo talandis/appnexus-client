@@ -1,0 +1,9 @@
+includes:
+    - ./vendor/phpstan/phpstan/conf/config.level7.neon
+    - ./vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+    excludes_analyse:
+    ignoreErrors:
+
+

@@ -10,9 +10,6 @@ use GuzzleHttp\Psr7\Stream;
 use Prophecy\Argument;
 use Test\TestCase;
 
-/**
- * Class AuthTest
- */
 class AdnxStrategyTest extends TestCase
 {
 
@@ -21,10 +18,9 @@ class AdnxStrategyTest extends TestCase
      */
     public function should_make_a_post_to_the_auth_endpoint()
     {
-
         $username = 'sample_username';
         $password = 'sample_password';
-        $token = 'a_sample_token123456789';
+        $token    = 'a_sample_token123456789';
 
         $fakeResponseContent = [
             "response" => [
@@ -53,14 +49,10 @@ class AdnxStrategyTest extends TestCase
 
         $client = $this->prophesize(ClientInterface::class);
 
-        $client
-            ->request('POST', AdnxStrategy::BASE_URL, ['body' => json_encode($payload)])
-            ->willReturn($dummyResponse->reveal());
+        $client->request('POST', AdnxStrategy::BASE_URL, ['body' => json_encode($payload)])->willReturn($dummyResponse->reveal());
 
         $auth = new AdnxStrategy($client->reveal(), $cache->reveal());
         $auth->authenticate($username, $password, true);
-
-
     }
 
 }

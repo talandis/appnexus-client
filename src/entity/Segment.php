@@ -2,232 +2,96 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-/**
- * Class Segment
- */
 class Segment
 {
 
     use HydratableTrait;
 
-    /** @var  int */
+    /**
+     * @var int|null
+     * AppNexus ID assigned by the API to reference this segment.
+     * Required: yes (on update only)
+     */
     protected $id;
 
-    /** @var  bool */
+    /**
+     * @var bool
+     * Boolean value - determines whether the segment can be used.
+     * required: no, default is active
+     */
     protected $active = true;
 
-    /** @var  string */
-    protected $description;
-
-    /** @var  int */
+    /**
+     * @var int|null
+     * The member ID that owns this segment.
+     * Required: yes
+     */
     protected $member_id;
 
-    /** @var  string */
-    protected $code;
-
-    /** @var  string */
-    protected $provider;
-
-    /** @var  float */
-    protected $price;
-
-    /** @var  string */
+    /**
+     * @var string|null
+     * A name used to describe the segment. This will be passed on the bid requests.
+     * Required: no
+     */
     protected $short_name;
 
-    /** @var  int */
-    protected $expire_minutes;
-
-    /** @var  string */
-    protected $category;
-
-    /** @var  \Datetime */
-    protected $last_activity;
-
     /**
-     * Segment constructor
+     * @var  int|null
+     * The number of minutes the user is kept in the segment. If you want to keep the user in
+     * the segment for retargeting purposes, set to the desired number of minutes (or null for system maximum value 180 days).
+     * If you want to add the user to the segment only for the duration of the ad call, set to 0. Changing this value does not
+     * retroactively affect users already in the segment. Also, if a user is re-added, the expiration window resets.
+     * Required: no
      */
-    public function __construct()
-    {
-        $this->active = true;
-        $this->last_activity = new \DateTime();
-        $this->price = 0.0;
-        $this->provider = 'base-provider';
-        $this->expire_minutes = 2147483647;
-    }
+    protected $expire_minutes = 2147483647;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param boolean $active
-     */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
         $this->active = $active;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMemberId()
+    public function getMemberId(): ?int
     {
         return $this->member_id;
     }
 
-    /**
-     * @param int $memberId
-     */
-    public function setMemberId($memberId)
+    public function setMemberId(int $memberId)
     {
         $this->member_id = $memberId;
     }
 
-    /**
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProvider()
-    {
-        return $this->provider;
-    }
-
-    /**
-     * @param string $provider
-     */
-    public function setProvider($provider)
-    {
-        $this->provider = $provider;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param float $price
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->short_name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name = null)
     {
         $this->short_name = $name;
     }
 
-    /**
-     * @return int
-     */
-    public function getExpireMinutes()
+    public function getExpireMinutes(): ?int
     {
         return $this->expire_minutes;
     }
 
-    /**
-     * @param int $expireMinutes
-     */
-    public function setExpireMinutes($expireMinutes)
+    public function setExpireMinutes(int $expireMinutes = null)
     {
         $this->expire_minutes = $expireMinutes;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
-    /**
-     * @param string $category
-     */
-    public function setCategory($category)
-    {
-        $this->category = $category;
-    }
-
-    /**
-     * @return \Datetime
-     */
-    public function getLastActivity()
-    {
-        return $this->last_activity;
-    }
-
-    /**
-     * @param \Datetime $lastActivity
-     */
-    public function setLastActivity(\Datetime $lastActivity)
-    {
-        $this->last_activity = $lastActivity;
     }
 }

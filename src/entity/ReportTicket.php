@@ -2,22 +2,19 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-/**
- * Class ReportTicket
- */
 class ReportTicket
 {
 
     use HydratableTrait;
 
-    /** @var  int */
+    /** @var  int|null */
     protected $report_id;
 
-    /** @var  string */
+    /** @var  bool */
     protected $cached;
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getReportId()
     {
@@ -25,7 +22,7 @@ class ReportTicket
     }
 
     /**
-     * @param int $report_id
+     * @param int|null $report_id
      */
     public function setReportId($report_id)
     {
@@ -33,7 +30,7 @@ class ReportTicket
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function getCached()
     {
@@ -41,7 +38,7 @@ class ReportTicket
     }
 
     /**
-     * @param string $cached
+     * @param bool $cached
      */
     public function setCached($cached)
     {

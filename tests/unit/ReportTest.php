@@ -7,6 +7,7 @@ use Audiens\AppnexusClient\entity\ReportStatus;
 use Audiens\AppnexusClient\entity\ReportTicket;
 use Audiens\AppnexusClient\exceptions\ReportException;
 use Audiens\AppnexusClient\service\Report;
+use Doctrine\Common\Cache\VoidCache;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
 use Prophecy\Argument;
@@ -30,7 +31,7 @@ class ReportTest extends TestCase
 
         $client->request('POST', Report::BASE_URL, Argument::any())->willReturn($fakeResponse);
 
-        $report = new Report($client->reveal());
+        $report = new Report($client->reveal(), new VoidCache());
 
         $reportTicket = $report->getReportTicket();
 
@@ -50,7 +51,7 @@ class ReportTest extends TestCase
 
         $client->request('POST', Report::BASE_URL, Argument::any())->willReturn($fakeResponse);
 
-        $report = new Report($client->reveal());
+        $report = new Report($client->reveal(), new VoidCache());
 
         $this->expectException(ReportException::class);
 
@@ -73,7 +74,7 @@ class ReportTest extends TestCase
 
         $client->request('GET', Report::BASE_URL_DOWNLOAD.'a_url', Argument::any())->willReturn($fakeResponse);
 
-        $report = new Report($client->reveal());
+        $report = new Report($client->reveal(), new VoidCache());
 
         $reportStatus = new ReportStatus();
 
@@ -102,7 +103,7 @@ class ReportTest extends TestCase
 
         $client->request('GET', Argument::any(), Argument::any())->willReturn($fakeResponse);
 
-        $report = new Report($client->reveal());
+        $report = new Report($client->reveal(), new VoidCache());
 
         $reportTicket = $report->getReportStatus($uploadTicket);
 

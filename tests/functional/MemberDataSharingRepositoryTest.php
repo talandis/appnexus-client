@@ -6,9 +6,6 @@ use Audiens\AppnexusClient\entity\MemberDataSharing;
 use Audiens\AppnexusClient\entity\MemberDataSharingSegment;
 use Test\FunctionalTestCase;
 
-/**
- * Class MemberDataSharingRepositoryTest
- */
 class MemberDataSharingRepositoryTest extends FunctionalTestCase
 {
     /**
@@ -16,12 +13,9 @@ class MemberDataSharingRepositoryTest extends FunctionalTestCase
      */
     public function find_all_will_return_multiple_member_data_sharing()
     {
+        $sharings = $this->getMemberDataSharingRepository()->findAll(0, 5);
 
-        $mdSharings = $this
-            ->getMemberDataSharingRepository()
-            ->findAll();
-
-        foreach ($mdSharings as $sharing) {
+        foreach ($sharings as $sharing) {
             $this->assertInstanceOf(MemberDataSharing::class, $sharing);
         }
     }
@@ -31,13 +25,9 @@ class MemberDataSharingRepositoryTest extends FunctionalTestCase
      */
     public function findByBuyerId_will_return_correnct_member_data_sharing()
     {
-        $this->markTestSkipped('Please insert a valid buyerId');
+        $repository = $this->getMemberDataSharingRepository();
 
-        $buyerId = ''; // please insert a valid buyerId
-        $mdRepo = $this->getMemberDataSharingRepository();
-
-        /** @var MemberDataSharing $sharing */
-        $sharings = $mdRepo->findByBuyerId($buyerId, getenv('MEMBER_ID'));
+        $sharings = $repository->findByBuyerId(getenv('BUYER_ID'), getenv('MEMBER_ID'));
 
         $this->assertCount(1, $sharings);
 
@@ -46,7 +36,7 @@ class MemberDataSharingRepositoryTest extends FunctionalTestCase
         $this->assertInstanceOf(MemberDataSharing::class, $sharing);
 
         $this->assertEquals($sharing->getDataMemberId(), getenv('MEMBER_ID'));
-        $this->assertEquals($sharing->getBuyerMemberId(), $buyerId);
+        $this->assertEquals($sharing->getBuyerMemberId(), getenv('BUYER_ID'));
     }
 
     /**
@@ -54,14 +44,10 @@ class MemberDataSharingRepositoryTest extends FunctionalTestCase
      */
     public function findById_will_return_correnct_member_data_sharing()
     {
-        $this->markTestSkipped('Please insert a valid record id');
-
-        $id = ''; //please insert a valid record id
-
         $mdRepo = $this->getMemberDataSharingRepository();
 
         /** @var MemberDataSharing $sharing */
-        $sharings = $mdRepo->findById($id);
+        $sharings = $mdRepo->findById(getenv('MEMBER_DATA_SHARING_RECORD_ID'));
 
         $this->assertCount(1, $sharings);
 
@@ -70,92 +56,45 @@ class MemberDataSharingRepositoryTest extends FunctionalTestCase
         $this->assertInstanceOf(MemberDataSharing::class, $sharing);
 
         $this->assertEquals($sharing->getDataMemberId(), getenv('MEMBER_ID'));
-        $this->assertEquals($sharing->getId(), $id);
+        $this->assertEquals($sharing->getId(), getenv('MEMBER_DATA_SHARING_RECORD_ID'));
     }
 
     /**
      * @test
      */
-    public function add_will_add_the_member_data_sharing()
+    public function update_will_change_the_sharing_record()
     {
-        $this->markTestSkipped('Please insert a valid buyerId');
-
-        $buyerId = ''; // please insert a valid buyerId
-
-        $mdSharing = new MemberDataSharing();
-
-        $mdSharing->setBuyerMemberId($buyerId);
-        $mdSharing->setDataMemberId(getenv('MEMBER_ID'));
-        $mdSharing->setSegmentExposure(MemberDataSharing::SEGMENT_EXPOSURE_ALL);
-
-        $mdRepo = $this->getMemberDataSharingRepository();
-
-        $repositoryResponse = $mdRepo->add($mdSharing);
-
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
-    }
-
-    /**
-     * @test
-     */
-    public function addSegmentsToMemberDataSharing_will_add_the_new_segments_to_the_member_data_sharing()
-    {
-        $this->markTestSkipped('Please insert a valid buyerId');
-
-        $buyerId = ''; // please insert a valid buyerId
-        $oldSegmentId = ''; // please insert a valid segment id
-        $newSegmentId = '';// please insert a valid segment id
-        $segment = new MemberDataSharingSegment();
-
-        $segment->setId($oldSegmentId);
-
-        $mdSharing = new MemberDataSharing();
-
-        $mdSharing->setBuyerMemberId($buyerId);
-        $mdSharing->setDataMemberId(getenv('MEMBER_ID'));
-        $mdSharing->setSegmentExposure(MemberDataSharing::SEGMENT_EXPOSURE_LIST);
-        $mdSharing->addSegments($segment);
-        $mdRepo = $this->getMemberDataSharingRepository();
-
-        $repositoryResponse = $mdRepo->add($mdSharing);
-
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
-
-        $mdRepo = $this->getMemberDataSharingRepository();
-
-        $segmentNew = new MemberDataSharingSegment();
-        $segmentNew->setId($newSegmentId);
-        $segmentNew->setName('test2');
-
-        $repositoryResponse = $mdRepo->addSegmentsToMemberDataSharing($mdSharing->getId(), [$segmentNew]);
-
-        $this->assertTrue($repositoryResponse->isSuccessful(), $repositoryResponse->getError()->getError());
+        $repository = $this->getMemberDataSharingRepository();
 
         /** @var MemberDataSharing $sharing */
-        $sharings = $mdRepo->findById($mdSharing->getId());
+        $sharings = $repository->findById(getenv('MEMBER_DATA_SHARING_RECORD_ID'));
 
-        $this->assertNotEmpty($sharings);
-        $this->assertEquals(1, count($sharings));
+        $this->assertCount(1, $sharings);
 
         $sharing = $sharings[0];
 
         $this->assertInstanceOf(MemberDataSharing::class, $sharing);
 
-        $segmentsOnline = $sharing->getSegments();
+        $this->assertEquals($sharing->getDataMemberId(), getenv('MEMBER_ID'));
+        $this->assertEquals($sharing->getId(), getenv('MEMBER_DATA_SHARING_RECORD_ID'));
 
-        $this->assertCount(2, $segmentsOnline);
+        $sharing->setSegmentExposure('all');
+        $sharing->setSegments([]);
+        $repositoryResponse = $repository->update($sharing);
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
+        $sharings = $repository->findById(getenv('MEMBER_DATA_SHARING_RECORD_ID'));
+        $sharing  = $sharings[0];
+        $this->assertEquals($sharing->getSegmentExposure(), 'all');
 
-        $found = false;
-
-        foreach($sharing->getSegments() as $mdObj)
-        {
-            if($mdObj->getId() === $newSegmentId)
-            {
-                $found = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($found);
+        $sharing->setSegmentExposure('list');
+        $segment = new MemberDataSharingSegment();
+        $segment->setId(getenv('SEGMENT_ID'));
+        $sharing->addSegments($segment);
+        $repositoryResponse = $repository->update($sharing);
+        $this->assertTrue($repositoryResponse->isSuccessful(), (string)$repositoryResponse->getError()->getError());
+        $sharings = $repository->findById(getenv('MEMBER_DATA_SHARING_RECORD_ID'));
+        $sharing  = $sharings[0];
+        $this->assertEquals($sharing->getSegmentExposure(), 'list');
     }
+
 }

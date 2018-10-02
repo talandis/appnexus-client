@@ -8,21 +8,18 @@ use Audiens\AppnexusClient\entity\MemberDataSharing;
 use Audiens\AppnexusClient\entity\MemberDataSharingSegment;
 use Audiens\AppnexusClient\exceptions\RepositoryException;
 use Doctrine\Common\Cache\Cache;
-use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 
-/**
- * Class CategoryRepository
- */
 class MemberDataSharingRepository implements CacheableInterface
 {
     use CachableTrait;
 
-    const BASE_URL = 'https://api.adnxs.com/member-data-sharing/';
+    public const BASE_URL         = 'https://api.adnxs.com/member-data-sharing/';
+    public const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/member-data-sharing/';
+    public const CACHE_NAMESPACE  = 'appnexus_member_data_sharing_find_all';
+    public const CACHE_EXPIRATION = 3600;
 
-    const SANDBOX_BASE_URL = 'http://api-test.adnxs.com/member-data-sharing/';
-
-    /** @var Client */
+    /** @var ClientInterface */
     protected $client;
 
     /** @var  int */
@@ -34,22 +31,15 @@ class MemberDataSharingRepository implements CacheableInterface
     /** @var  string */
     protected $baseUrl;
 
-    const CACHE_NAMESPACE = 'appnexus_member_data_sharing_find_all';
-
-    const CACHE_EXPIRATION = 3600;
-
     /**
-     * SegmentRepository constructor.
-     *
      * @param ClientInterface $client
-     * @param Cache|null $cache
+     * @param Cache           $cache
      */
-    public function __construct(ClientInterface $client, Cache $cache = null)
+    public function __construct(ClientInterface $client, Cache $cache)
     {
-        $this->client       = $client;
-        $this->cache        = $cache;
-        $this->cacheEnabled = $cache instanceof Cache;
-        $this->baseUrl      = self::BASE_URL;
+        $this->client  = $client;
+        $this->cache   = $cache;
+        $this->baseUrl = self::BASE_URL;
     }
 
     /**
@@ -71,21 +61,19 @@ class MemberDataSharingRepository implements CacheableInterface
     /**
      * @param int $start
      * @param int $maxResults
+     *
      * @return array|MemberDataSharing[]
      * @throws RepositoryException
      */
     public function findAll($start = 0, $maxResults = 100)
     {
+        $cacheKey = self::CACHE_NAMESPACE.sha1($start.$maxResults);
 
-        $cacheKey = self::CACHE_NAMESPACE . sha1($start . $maxResults);
-
-        if ($this->isCacheEnabled()) {
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
-            }
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
         }
 
-        $compiledUrl = $this->baseUrl . "?start_element=$start&num_elements=$maxResults";
+        $compiledUrl = $this->baseUrl."?start_element=$start&num_elements=$maxResults";
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -109,31 +97,27 @@ class MemberDataSharingRepository implements CacheableInterface
             $result[] = MemberDataSharing::fromArray($dataArray);
         }
 
-        if ($this->isCacheEnabled()) {
-            $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
-        }
+        $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
 
         return $result;
     }
 
     /**
-     * @param $buyerId
-     * @param string $memberId
+     * @param int $buyerId
+     * @param int $memberId
+     *
      * @return array|MemberDataSharing[]
      * @throws RepositoryException
      */
     public function findByBuyerId($buyerId, $memberId)
     {
+        $cacheKey = self::CACHE_NAMESPACE.sha1($buyerId.$memberId);
 
-        $cacheKey = self::CACHE_NAMESPACE . sha1($buyerId . $memberId);
-
-        if ($this->isCacheEnabled()) {
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
-            }
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
         }
 
-        $compiledUrl = $this->baseUrl . "?data_member_id=$memberId&buyer_member_id=$buyerId";
+        $compiledUrl = $this->baseUrl."?data_member_id=$memberId&buyer_member_id=$buyerId";
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -159,8 +143,8 @@ class MemberDataSharingRepository implements CacheableInterface
             $segments = [];
 
             if (!empty($memberDataSharing->getSegments() && count($memberDataSharing->getSegments()) > 0)) {
-                foreach ($memberDataSharing->getSegments() as $s) {
-                    $segments[] = MemberDataSharingSegment::fromArray($s);
+                foreach ($memberDataSharing->getSegments() as $segment) {
+                    $segments[] = MemberDataSharingSegment::fromArray($segment);
                 }
             }
             $memberDataSharing->setSegments($segments);
@@ -168,30 +152,25 @@ class MemberDataSharingRepository implements CacheableInterface
             $result[] = $memberDataSharing;
         }
 
-        if ($this->isCacheEnabled()) {
-            $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
-        }
+        $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
 
         return $result;
     }
 
     /**
-     * @param $recordId
+     * @param int $id
+     *
      * @return array|MemberDataSharing[]
-     * @throws RepositoryException
      */
     public function findById($id)
     {
+        $cacheKey = self::CACHE_NAMESPACE.sha1((string)$id);
 
-        $cacheKey = self::CACHE_NAMESPACE . sha1($id);
-
-        if ($this->isCacheEnabled()) {
-            if ($this->cache->contains($cacheKey)) {
-                return $this->cache->fetch($cacheKey);
-            }
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
         }
 
-        $compiledUrl = $this->baseUrl . "$id";
+        $compiledUrl = $this->baseUrl."$id";
 
         $response = $this->client->request('GET', $compiledUrl);
 
@@ -207,7 +186,6 @@ class MemberDataSharingRepository implements CacheableInterface
 
         $result = [];
 
-
         if (!$responseContent['response']['member_data_sharing']) {
             $responseContent['response']['member_data_sharing'] = [];
         }
@@ -217,18 +195,15 @@ class MemberDataSharingRepository implements CacheableInterface
         $segments = [];
 
         if (!empty($memberDataSharing->getSegments() && count($memberDataSharing->getSegments()) > 0)) {
-            foreach ($memberDataSharing->getSegments() as $s) {
-                $segments[] = MemberDataSharingSegment::fromArray($s);
+            foreach ($memberDataSharing->getSegments() as $segment) {
+                $segments[] = MemberDataSharingSegment::fromArray($segment);
             }
         }
         $memberDataSharing->setSegments($segments);
 
         $result[] = $memberDataSharing;
 
-
-        if ($this->isCacheEnabled()) {
-            $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
-        }
+        $this->cache->save($cacheKey, $result, self::CACHE_EXPIRATION);
 
         return $result;
     }
@@ -241,13 +216,11 @@ class MemberDataSharingRepository implements CacheableInterface
      */
     public function add(MemberDataSharing $mSharing)
     {
-
         $compiledUrl = $this->baseUrl;
 
         $payload = [
             'member_data_sharing' => $mSharing->toArray(),
         ];
-
 
         if (!empty($mSharing->getSegments())) {
             $segmentToUpload = [];
@@ -259,14 +232,12 @@ class MemberDataSharingRepository implements CacheableInterface
             $payload['member_data_sharing']['segments'] = $segmentToUpload;
         }
 
-
-
         $response = $this->client->request('POST', $compiledUrl, ['body' => json_encode($payload)]);
 
         $repositoryResponse = RepositoryResponse::fromResponse($response);
 
         if ($repositoryResponse->isSuccessful()) {
-            $stream = $response->getBody();
+            $stream          = $response->getBody();
             $responseContent = json_decode($stream->getContents(), true);
             $stream->rewind();
 
@@ -281,18 +252,17 @@ class MemberDataSharingRepository implements CacheableInterface
     }
 
     /**
-     * @param $memberDataSharingId
+     * @param int                        $memberDataSharingId
      * @param MemberDataSharingSegment[] $segments
+     *
      * @return RepositoryResponse
      */
     public function addSegmentsToMemberDataSharing($memberDataSharingId, $segments)
     {
-
         $compiledUrl = $this->baseUrl.$memberDataSharingId;
 
         /** @var MemberDataSharingSegment[] $mdObject */
         $mdObjectArray = $this->findById($memberDataSharingId);
-
 
         if (count($mdObjectArray) === 0) {
             throw new \RuntimeException('Could not find the selected member data sharing');
@@ -310,13 +280,27 @@ class MemberDataSharingRepository implements CacheableInterface
             $segmentToUpload[] = $segment->toArray();
         }
 
-
-
-
         $payload = [
             'member_data_sharing' => [
-                'segments' => $segmentToUpload
-            ]
+                'segments' => $segmentToUpload,
+            ],
+        ];
+
+        $response = $this->client->request('PUT', $compiledUrl, ['body' => json_encode($payload)]);
+
+        return RepositoryResponse::fromResponse($response);
+    }
+
+    public function update(MemberDataSharing $memberDataSharing)
+    {
+        if (!$memberDataSharing->getId()) {
+            throw RepositoryException::missingMemberDataSharingId($memberDataSharing);
+        }
+
+        $compiledUrl = $this->baseUrl.'?id='.$memberDataSharing->getId();
+
+        $payload = [
+            'member_data_sharing' => $memberDataSharing->toArray(),
         ];
 
         $response = $this->client->request('PUT', $compiledUrl, ['body' => json_encode($payload)]);

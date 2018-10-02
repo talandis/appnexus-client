@@ -2,15 +2,12 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-/**
- * Class ReportStatus
- */
 class ReportStatus extends ReportTicket
 {
 
     use HydratableTrait;
 
-    const STATUS_READY = 'ready';
+    public const STATUS_READY = 'ready';
 
     /** @var  string */
     protected $status;
@@ -21,13 +18,10 @@ class ReportStatus extends ReportTicket
     /** @var string */
     protected $url;
 
-    /**
-     * ReportStatus constructor.
-     */
     public function __construct()
     {
         $this->report_id = null;
-        $this->cached = false;
+        $this->cached    = false;
     }
 
     /**

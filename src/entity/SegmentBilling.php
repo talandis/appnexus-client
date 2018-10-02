@@ -2,150 +2,121 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-/**
- * Class SegmentBilling
- */
 class SegmentBilling
 {
     use HydratableTrait;
 
-    /** @var  int */
+    /**
+     * @var int|null
+     * The ID of the sharing record. Can be null in creation phase
+     * Required on: PUT (in JSON) DELETE (in query string)
+     */
     protected $id;
 
-    /** @var  bool */
+    /**
+     * @var bool
+     * The status of the mapping record. If set to true, mapping record is active.
+     * Required on: POST
+     */
     protected $active = true;
 
-    /** @var  int */
+    /**
+     * @var int|null
+     * Read-only. Your member ID.
+     */
     protected $member_id;
 
-    /** @var  int */
+    /**
+     * @var int
+     * The AppNexus segment ID that is being mapped.
+     * POST/PUT
+     */
     protected $segment_id;
 
-    /** @var  int */
+    /**
+     * @var  int
+     * The data provider ID assigned to you by the Data Marketplace. Note: The POST/CALL call will fail if you
+     * submit an ID that is not owned by your account
+     * Required on: POST/PUT
+     */
     protected $data_provider_id;
 
-    /** @var  int */
+    /**
+     * @var int
+     * The pricing category ID created on AppNexus. Note: The POST/PUT calls will fail if you submit an ID that
+     * is not owned by your account
+     * Required on : POST/PUT
+     */
     protected $data_category_id;
 
-    /** @var  bool */
-    protected $is_public;
-
     /**
-     * SegmentBilling constructor.
+     * @var bool
+     * The setting to mark the segment as public or private. If set to true, then the segment will be shared to
+     * all Data Marketplace buyers immediately.
      */
-    public function __construct()
-    {
-        $this->is_public = false;
-    }
+    protected $is_public = false;
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param boolean $active
-     */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
         $this->active = $active;
     }
 
-    /**
-     * @return int
-     */
-    public function getMemberId()
+    public function getMemberId(): ?int
     {
         return $this->member_id;
     }
 
-    /**
-     * @param int $member_id
-     */
-    public function setMemberId($member_id)
-    {
-        $this->member_id = $member_id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSegmentId()
+    public function getSegmentId(): int
     {
         return $this->segment_id;
     }
 
-    /**
-     * @param int $segment_id
-     */
-    public function setSegmentId($segment_id)
+    public function setSegmentId(int $segment_id)
     {
         $this->segment_id = $segment_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getDataProviderId()
+    public function getDataProviderId(): int
     {
         return $this->data_provider_id;
     }
 
-    /**
-     * @param int $data_provider_id
-     */
-    public function setDataProviderId($data_provider_id)
+    public function setDataProviderId(int $data_provider_id)
     {
         $this->data_provider_id = $data_provider_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getDataCategoryId()
+    public function getDataCategoryId(): int
     {
         return $this->data_category_id;
     }
 
-    /**
-     * @param int $data_category_id
-     */
-    public function setDataCategoryId($data_category_id)
+    public function setDataCategoryId(int $data_category_id)
     {
         $this->data_category_id = $data_category_id;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIsPublic()
+    public function getIsPublic(): bool
     {
         return $this->is_public;
     }
 
-    /**
-     * @param bool $is_public
-     */
-    public function setIsPublic($is_public)
+    public function setIsPublic(bool $is_public)
     {
         $this->is_public = $is_public;
     }

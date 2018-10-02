@@ -3,36 +3,28 @@
 namespace Test;
 
 use Audiens\AppnexusClient\entity\UploadJobStatus;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Stream;
-use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
+use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class SegmentRepositoryFunctionTest
- */
-class TestCase extends \PHPUnit_Framework_TestCase
+class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected function setUp()
     {
         parent::setUp();
     }
 
-    /**
-     * @param $responseBody
-     *
-     * @return \Prophecy\Prophecy\ObjectProphecy
-     */
     protected function getFakeResponse($responseBody)
     {
-
-        $fakeResponse = $this->prophesize(Response::class);
+        /** @var ObjectProphecy|ResponseInterface $fakeResponse */
+        $fakeResponse = $this->prophesize(ResponseInterface::class);
+        /** @var ObjectProphecy|Stream $stream */
         $stream = $this->prophesize(Stream::class);
         $stream->getContents()->willReturn($responseBody);
         $stream->rewind()->willReturn(null)->shouldBeCalled();
         $fakeResponse->getBody()->willReturn($stream->reveal());
 
         return $fakeResponse;
-
     }
 
     /**
@@ -87,7 +79,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     /**
      * @return string
      */
@@ -104,7 +95,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
             ]
         );
     }
-
 
     /**
      * @return string
@@ -245,18 +235,17 @@ class TestCase extends \PHPUnit_Framework_TestCase
             [
                 'response' => [
                     'status' => 'OK',
-                    "segment-billing-category" =>
-                        [
-                            0 => [
-                                "id" => 123,
-                                "segment_id" => 123,
-                                "data_provider_id" => 1,
-                                "data_category_id" => 1001,
-                                "active" => true,
-                                "member_id" => 'member_id',
-                                "is_public" => true
-                            ]
-                        ]
+                    "segment-billing-category" => [
+                        0 => [
+                            "id" => 123,
+                            "segment_id" => 123,
+                            "data_provider_id" => 1,
+                            "data_category_id" => 1001,
+                            "active" => true,
+                            "member_id" => 'member_id',
+                            "is_public" => true,
+                        ],
+                    ],
                 ],
             ]
         );
@@ -279,7 +268,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
                             "data_category_id" => 1001,
                             "active" => true,
                             "member_id" => 'member_id',
-                            "is_public" => true
+                            "is_public" => true,
                         ],
                         [
                             "id" => 456,
@@ -288,7 +277,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
                             "data_category_id" => 1001,
                             "active" => true,
                             "member_id" => 'member_id',
-                            "is_public" => true
+                            "is_public" => true,
                         ],
                         [
                             "id" => 789,
@@ -297,8 +286,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
                             "data_category_id" => 1001,
                             "active" => true,
                             "member_id" => 'member_id',
-                            "is_public" => true
-                        ]
+                            "is_public" => true,
+                        ],
                     ],
                 ],
             ]
@@ -312,15 +301,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         return json_encode(
             [
-                'response' =>
-                    [
-                        'error_id' => 'SYNTAX',
-                        'error' => 'Invalid path /segment - member is required',
-                        'error_description' => null,
-                        'error_code' => null,
-                        'service' => 'segment',
-                        'method' => 'POST',
-                    ],
+                'response' => [
+                    'error_id' => 'SYNTAX',
+                    'error' => 'Invalid path /segment - member is required',
+                    'error_description' => null,
+                    'error_code' => null,
+                    'service' => 'segment',
+                    'method' => 'POST',
+                ],
             ]
 
         );
@@ -422,6 +410,5 @@ class TestCase extends \PHPUnit_Framework_TestCase
             ]
         );
     }
-
 
 }

@@ -2,48 +2,41 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-/**
- * Class MemberDataSharingSegment
- */
-class MemberDataSharingSegment
+class MemberDataSharingSegment implements \JsonSerializable
 {
     use HydratableTrait;
 
-    /** @var string */
+    /** @var int */
     protected $id;
 
-    /** @var string */
+    /** @var string|null */
     protected $name;
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+        ];
     }
 }

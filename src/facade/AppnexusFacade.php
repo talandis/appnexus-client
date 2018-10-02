@@ -15,14 +15,16 @@ use Audiens\AppnexusClient\service\UserUpload;
 use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
 
-/**
- * Class AppnexusFacade
- */
 class AppnexusFacade implements CacheableInterface
 {
 
+    /** @var string */
     protected $username;
+
+    /** @var string */
     protected $password;
+
+    /** @var int */
     protected $memberId;
 
     /** @var  SegmentRepository */
@@ -34,140 +36,71 @@ class AppnexusFacade implements CacheableInterface
     /** @var Report */
     private $report;
 
-    /**
-     * AppnexusFacade constructor.
-     *
-     * @param $username
-     * @param $password
-     * @param $memberId
-     */
-    public function __construct($username, $password, $memberId)
+    public function __construct(string $username, string $password, int $memberId)
     {
         $this->username = $username;
         $this->password = $password;
         $this->memberId = $memberId;
 
         $client = new Client();
-        $cache = new FilesystemCache('build');
+        $cache  = new FilesystemCache('build');
 
         $authStrategy = new AdnxStrategy($client, $cache);
 
         $auth = new Auth($username, $password, $client, $authStrategy);
 
-        $this->segmentRepository = new SegmentRepository($auth, $cache);
-        $this->userUpload = new UserUpload($auth, $cache);
-        $this->report = new Report($auth, $cache);
+        $this->segmentRepository = new SegmentRepository($auth, $cache, $memberId);
+        $this->userUpload        = new UserUpload($auth, $cache);
+        $this->report            = new Report($auth, $cache);
     }
 
-    /**
-     * @param Segment $segment
-     *
-     * @return RepositoryResponse
-     * @throws \Exception
-     */
     public function add(Segment $segment)
     {
-
         return $this->segmentRepository->add($segment);
     }
 
-    /**
-     * @param $id
-     *
-     * @return RepositoryResponse
-     */
     public function remove($id)
     {
-
-        return $this->segmentRepository->remove($this->memberId, $id);
+        return $this->segmentRepository->remove($id);
     }
 
-    /**
-     * @param Segment $segment
-     *
-     * @return RepositoryResponse
-     * @throws \Exception
-     */
-    public function update(Segment $segment)
+    public function update(Segment $segment): RepositoryResponse
     {
         return $this->segmentRepository->update($segment);
     }
 
-    /**
-     * @param $id
-     *
-     * @return Segment|null
-     */
-    public function findOneById($id)
+    public function findOneById($id): ?Segment
     {
-        return $this->segmentRepository->findOneById($this->memberId, $id);
+        return $this->segmentRepository->findOneById($id);
     }
 
-    /**
-     * @param int $start
-     * @param int $maxResults
-     *
-     * @return array|mixed|null
-     * @throws \Exception
-     */
-    public function findAll($start = 0, $maxResults = 100)
+    public function findAll(int $start = 0, int $maxResults = 100)
     {
-
-        return $this->segmentRepository->findAll($this->memberId, $start, $maxResults);
+        return $this->segmentRepository->findAll($start, $maxResults);
     }
 
-    /**
-     * @param $fileAsString
-     *
-     * @return \Audiens\AppnexusClient\entity\UploadJobStatus
-     * @throws \Exception
-     */
-    public function upload($fileAsString)
+    public function upload(string $fileAsString): UploadJobStatus
     {
         return $this->userUpload->upload($this->memberId, $fileAsString);
     }
 
-    /**
-     * @param int $start
-     * @param int $maxResults
-     *
-     * @return \Audiens\AppnexusClient\entity\UploadJobStatus[]
-     * @throws \Audiens\AppnexusClient\exceptions\RepositoryException
-     */
-    public function getUploadHistory($start = 0, $maxResults = 100)
+    public function getUploadHistory(int $start = 0, int $maxResults = 100): array
     {
         return $this->userUpload->getUploadHistory($this->memberId, $start, $maxResults);
     }
 
-    /**
-     * @return \Audiens\AppnexusClient\entity\UploadTicket
-     * @throws \Exception
-     */
-    public function getUploadTicket()
+    public function getUploadTicket(): UploadTicket
     {
         return $this->userUpload->getUploadTicket($this->memberId);
     }
 
-    /**
-     * @param UploadTicket $uploadTicket
-     *
-     * @return UploadJobStatus $uploadJobStatus
-     * @throws \Exception
-     */
-    public function getJobStatus(UploadTicket $uploadTicket)
+    public function getJobStatus(UploadTicket $uploadTicket): UploadJobStatus
     {
         return $this->userUpload->getJobStatus($uploadTicket);
     }
 
-    /**
-     * @param array $reportFormat
-     *
-     * @return array
-     * @throws \Audiens\AppnexusClient\exceptions\RepositoryException
-     */
-    public function getReport($reportFormat = Report::REVENUE_REPORT)
+    public function getReport($reportFormat = Report::REVENUE_REPORT): array
     {
-
         $reportStatus = $this->report->getReportStatus($this->report->getReportTicket($reportFormat));
 
         $maxSteps = 0;
@@ -180,10 +113,7 @@ class AppnexusFacade implements CacheableInterface
         return $this->report->getReport($reportStatus);
     }
 
-    /**
-     * @return bool
-     */
-    public function isCacheEnabled()
+    public function isCacheEnabled(): bool
     {
         return $this->segmentRepository->isCacheEnabled() || $this->userUpload->isCacheEnabled();
     }

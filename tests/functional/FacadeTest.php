@@ -6,9 +6,6 @@ use Audiens\AppnexusClient\service\Report;
 use Prophecy\Argument;
 use Test\FunctionalTestCase;
 
-/**
- * Class FacadeTest
- */
 class FacadeTest extends FunctionalTestCase
 {
 
@@ -33,8 +30,6 @@ class FacadeTest extends FunctionalTestCase
      */
     public function get_report_will_return_a_report_with_the_segment_load()
     {
-
-        $this->markTestSkipped();
 
         $facade = $this->getFacade();
 

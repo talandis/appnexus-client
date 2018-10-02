@@ -2,19 +2,13 @@
 
 namespace Audiens\AppnexusClient;
 
-/**
- * Class CachableTrait
- */
 trait CachableTrait
 {
 
     /** @var bool */
     protected $cacheEnabled;
 
-    /**
-     * @return boolean
-     */
-    public function isCacheEnabled()
+    public function isCacheEnabled(): bool
     {
         return $this->cacheEnabled;
     }

@@ -2,118 +2,101 @@
 
 namespace Audiens\AppnexusClient\entity;
 
-/**
- * Class MemberDataSharing
- */
 class MemberDataSharing
 {
-    const SEGMENT_EXPOSURE_ALL = 'all';
-    const SEGMENT_EXPOSURE_LIST = 'list';
+    public const SEGMENT_EXPOSURE_ALL  = 'all';
+    public const SEGMENT_EXPOSURE_LIST = 'list';
 
     use HydratableTrait;
 
-    /** @var  string */
+    /**
+     * @var int
+     * The ID of the sharing record.
+     * Required on: PUT/DELETE, in query string
+     */
     protected $id;
 
-    /** @var  string */
+    /**
+     * @var int
+     * Read-only. Your member ID.
+     */
     protected $data_member_id;
 
-    /** @var string */
+    /**
+     * @var int
+     * The ID of the member with whom you are sharing segments.
+     * Required on: POST
+     */
     protected $buyer_member_id;
 
     /**
-     * @var  string
+     * @var string
+     * Whether you share all of your segments or a list of specific segments with the member.
+     * Possible values: "all" or "list".  If you choose "all", any newly created segments will automatically
+     * be shared with the buyer member. If you create custom segments that should only be accessible to certain buyers,
+     * you should use "list" exposure.
      * see SEGMENT_EXPOSURE_*
+     * Required on: POST
      */
     protected $segment_exposure;
 
-    /** @var  MemberDataSharingSegment[] */
+    /**
+     * @var MemberDataSharingSegment[]
+     * If segment_exposure is "list", the list of segments that you are sharing with the member.
+     */
     protected $segments;
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getDataMemberId()
+    public function getDataMemberId(): int
     {
         return $this->data_member_id;
     }
 
-    /**
-     * @param string $data_member_id
-     */
-    public function setDataMemberId($data_member_id)
+    public function setDataMemberId(int $data_member_id)
     {
         $this->data_member_id = $data_member_id;
     }
 
-    /**
-     * @return string
-     */
-    public function getBuyerMemberId()
+    public function getBuyerMemberId(): int
     {
         return $this->buyer_member_id;
     }
 
-    /**
-     * @param string $buyer_member_id
-     */
-    public function setBuyerMemberId($buyer_member_id)
+    public function setBuyerMemberId(int $buyer_member_id)
     {
         $this->buyer_member_id = $buyer_member_id;
     }
 
-    /**
-     * @return string
-     */
-    public function getSegmentExposure()
+    public function getSegmentExposure(): string
     {
         return $this->segment_exposure;
     }
 
-    /**
-     * @param string $segment_exposure
-     */
-    public function setSegmentExposure($segment_exposure)
+    public function setSegmentExposure(string $segment_exposure)
     {
         $this->segment_exposure = $segment_exposure;
     }
 
-    /**
-     * @return MemberDataSharingSegment[]
-     */
-    public function getSegments()
+    public function getSegments(): array
     {
-        return $this->segments;
+        return $this->segments ?? [];
     }
 
-    /**
-     *
-     */
-    public function setSegments($segments)
+    public function setSegments(array $segments)
     {
         $this->segments = $segments;
     }
 
-    /**
-     * @param MemberDataSharingSegment $segment
-     */
-    public function addSegments($segment)
+    public function addSegments(MemberDataSharingSegment $segment)
     {
         $this->segments[] = $segment;
     }
